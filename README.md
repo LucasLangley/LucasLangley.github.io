@@ -31,7 +31,7 @@ E há 7 segredos escondidos, com pistas diferentes no computador e no celular (l
 
 ## Mudar o conteúdo
 
-Todo o texto fica em [`src/data.ts`](src/data.ts): perfil, habilidades, projetos, jornada e links. O layout não precisa ser tocado.
+O site é bilíngue (português e inglês, com bandeiras na tela inicial e opção em OPÇÕES). O texto de cada idioma fica em [`src/i18n/pt.ts`](src/i18n/pt.ts) e [`src/i18n/en.ts`](src/i18n/en.ts), com a mesma estrutura: o TypeScript avisa se faltar alguma chave numa das línguas. Links de contato ficam em [`src/data.ts`](src/data.ts). O layout não precisa ser tocado.
 
 Se entrar texto com caracteres novos (principalmente japonês), rode `npm run fonts` para incluir os blocos de fonte que faltarem. O `npm run build` já faz isso.
 

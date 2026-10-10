@@ -1,6 +1,27 @@
 import './fonts.css'
 import './style.css'
-import { EGGS, INTRO, JOURNEY, LINKS, MENU, PROFILE, QUESTS, SECRETS, SECTIONS, SKILLS, type Quest, type SecretId, type Section } from './data.ts'
+import {
+  EGGS,
+  INTRO,
+  JOURNEY,
+  LANG,
+  LANGS,
+  LINKS,
+  MENU,
+  PROFILE,
+  QUESTS,
+  SECRETS,
+  SECTIONS,
+  SKILLS,
+  UI,
+  browserLang,
+  fmt,
+  setLang,
+  type Lang,
+  type Quest,
+  type SecretId,
+  type Section,
+} from './data.ts'
 import { pixelAccents } from './accents.ts'
 import { setMusic, sound, unlockAudio } from './audio.ts'
 import { Typewriter } from './dialog.ts'
@@ -18,6 +39,10 @@ const hud = document.getElementById('hud')!
 const scene = new Scene(document.getElementById('scene') as HTMLCanvasElement)
 const touch = window.matchMedia('(pointer: coarse)').matches
 const wide = () => window.matchMedia('(min-width: 900px)').matches
+
+// Idioma: o que o visitante escolheu ou, na primeira visita, o do navegador.
+setLang(save.settings.lang || browserLang())
+document.documentElement.lang = LANG === 'pt' ? 'pt-BR' : 'en'
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
 const cursor = () => icon('cursor', 3, 'cmd__cursor')
@@ -251,7 +276,7 @@ function render(next: Route) {
   updateHud()
 
   const entry = MENU.find((m) => m.route === next)
-  document.title = entry ? `${entry.label} · Lucas Boroto` : 'Lucas Boroto · Portfólio RPG'
+  document.title = entry ? `${entry.label} · Lucas Boroto` : UI.docTitle
 
   switch (next) {
     case 'title':
@@ -290,12 +315,16 @@ function render(next: Route) {
 function renderHud() {
   hud.innerHTML = `
     <div class="win hud">
-      <span class="hud__stars" aria-label="Estrelas">${icon('star', 2)}<b data-stars>0</b>/${SECTIONS.length}</span>
-      <span class="hud__stars" aria-label="Segredos">${icon('chest', 2)}<b data-secrets>0</b>/${MY_SECRETS.length}</span>
-      <span class="hud__time"><span class="hud__label">TEMPO</span> <b data-time>00:00:00</b></span>
+      <span class="hud__stars" aria-label="${UI.hudStars}">${icon('star', 2)}<b data-stars>0</b>/${SECTIONS.length}</span>
+      <span class="hud__stars" aria-label="${UI.hudSecrets}">${icon('chest', 2)}<b data-secrets>0</b>/${mySecrets().length}</span>
+      <span class="hud__time"><span class="hud__label">${UI.hudTime}</span> <b data-time>00:00:00</b></span>
       <button class="hud__sound" data-sound type="button"></button>
     </div>`
   hud.querySelector('[data-sound]')!.addEventListener('click', toggleSound)
+  updateHud()
+}
+
+function startClock() {
   window.setInterval(() => {
     if (document.hidden) return
     save.playMs += 1000
@@ -311,9 +340,9 @@ function updateHud() {
   hud.querySelector('[data-stars]')!.textContent = String(save.visited.length)
   hud.querySelector('[data-secrets]')!.textContent = String(foundCount())
   const btn = hud.querySelector<HTMLButtonElement>('[data-sound]')!
-  btn.textContent = save.settings.sfx ? '♪ SOM' : '♪ MUDO'
+  btn.textContent = save.settings.sfx ? UI.soundOn : UI.soundOff
   btn.setAttribute('aria-pressed', String(save.settings.sfx))
-  btn.setAttribute('aria-label', save.settings.sfx ? 'Som ligado. Tecla M desliga.' : 'Som desligado. Tecla M liga.')
+  btn.setAttribute('aria-label', save.settings.sfx ? UI.soundOnAria : UI.soundOffAria)
 }
 
 function toggleSound() {
@@ -342,7 +371,7 @@ function award(section: Section) {
         sound.fanfare()
         scene.celebrate()
         hero?.happy(2500)
-        toast(`${icon('star', 3)}<span>PORTFÓLIO 100%! OBRIGADO POR JOGAR.</span>`, 'star')
+        toast(`${icon('star', 3)}<span>${UI.allStars}</span>`, 'star')
       }, 1400)
     }
   }, 380)
@@ -354,7 +383,7 @@ function secret() {
   sound.fanfare()
   scene.celebrate(12)
   hero?.happy(3000)
-  toast(`${icon('spark', 3)}<span>CÓDIGO SECRETO ATIVADO!</span>`, 'star')
+  toast(`${icon('spark', 3)}<span>${UI.konami}</span>`, 'star')
   found('konami')
 }
 
@@ -362,25 +391,25 @@ function secret() {
 
 /** Os segredos deste aparelho: no celular, os de teclado viram gestos e o do console vira girar a tela. */
 const DEVICE = touch ? 'touch' : 'pc'
-const MY_SECRETS = SECRETS.filter((s) => !s.only || s.only === DEVICE)
-const foundCount = () => MY_SECRETS.filter((s) => save.secrets.includes(s.id)).length
+const mySecrets = () => SECRETS.filter((s) => !s.only || s.only === DEVICE)
+const foundCount = () => mySecrets().filter((s) => save.secrets.includes(s.id)).length
 
 /** Registra um segredo achado: aviso, contador no HUD e festa quando acha todos. */
 function found(id: SecretId) {
-  if (!MY_SECRETS.some((s) => s.id === id) || !discover(id)) return
+  if (!mySecrets().some((s) => s.id === id) || !discover(id)) return
   updateHud()
   const n = foundCount()
-  const total = MY_SECRETS.length
-  const name = MY_SECRETS.find((s) => s.id === id)!.name
+  const total = mySecrets().length
+  const name = mySecrets().find((s) => s.id === id)!.name
   window.setTimeout(() => {
     sound.star()
-    toast(`${icon('chestOpen', 3)}<span>SEGREDO: ${esc(name)}</span><b>${n}/${total}</b>`, 'star')
+    toast(`${icon('chestOpen', 3)}<span>${UI.secretFound}: ${esc(name)}</span><b>${n}/${total}</b>`, 'star')
     if (n === total) {
       window.setTimeout(() => {
         sound.fanfare()
         scene.celebrate(14)
         hero?.happy(3000)
-        toast(`${icon('chestOpen', 3)}<span>${total}/${total} SEGREDOS! NADA ESCAPA DE VOCÊ.</span>`, 'star')
+        toast(`${icon('chestOpen', 3)}<span>${fmt(UI.allSecrets, { total })}</span>`, 'star')
       }, 1500)
     }
     if (route === 'secrets') renderSecrets(nav.index)
@@ -411,12 +440,12 @@ function bindPoke(canvas: HTMLCanvasElement) {
     canvas.classList.remove('hop')
     void canvas.offsetWidth
     canvas.classList.add('hop')
-    const line = EGGS.poke[pokes]
+    const line = (EGGS.poke as Record<number, string>)[pokes]
     if (line) say('LUCAS', line)
     if (pokes === 3) found('poke')
     if (pokes === 10) {
       scene.celebrate(3)
-      toast(`${icon('heart', 3)}<span>CUTUCADOR PROFISSIONAL</span>`, 'star')
+      toast(`${icon('heart', 3)}<span>${UI.pokePro}</span>`, 'star')
     }
   })
 }
@@ -566,18 +595,14 @@ function consoleHello() {
     fmt += '\n'
   }
   console.log(fmt, ...styles)
-  console.log('%cEi, dev curioso!', 'font: bold 16px monospace; color: #ffd23f')
-  console.log(
-    '%cO código deste portfólio: https://github.com/LucasLangley/LucasLangley.github.io\nDigite lucas.oi() aqui para destravar um segredo.',
-    'font: 12px monospace; color: #aab2dc',
-  )
-  ;(window as unknown as { lucas: { oi: () => string } }).lucas = {
-    oi: () => {
-      found('console')
-      say('LUCAS', EGGS.console)
-      return EGGS.console
-    },
+  console.log(`%c${UI.devHello}`, 'font: bold 16px monospace; color: #ffd23f')
+  console.log(`%c${UI.devNote}`, 'font: 12px monospace; color: #aab2dc')
+  const answer = () => {
+    found('console')
+    say('LUCAS', EGGS.console)
+    return EGGS.console
   }
+  ;(window as unknown as { lucas: Record<'oi' | 'hi', () => string> }).lucas = { oi: answer, hi: answer }
 }
 consoleHello()
 
@@ -591,13 +616,19 @@ function renderTitle() {
         <h1 class="title__name"><span>LUCAS</span><span>BOROTO</span></h1>
         <p class="title__sub">PORTFOLIO RPG</p>
       </div>
-      <nav class="title__menu" aria-label="Início">
-        ${save.introSeen ? `<button class="cmd" type="button" data-act="continue">${cursor()}<span>CONTINUAR</span></button>` : ''}
-        <button class="cmd" type="button" data-act="new">${cursor()}<span>NOVO JOGO</span></button>
+      <nav class="title__menu" aria-label="${UI.navStart}">
+        ${save.introSeen ? `<button class="cmd" type="button" data-act="continue">${cursor()}<span>${UI.continue}</span></button>` : ''}
+        <button class="cmd" type="button" data-act="new">${cursor()}<span>${UI.newGame}</span></button>
       </nav>
-      <p class="title__hint">${touch ? 'TOQUE PARA COMEÇAR' : '↑↓ ESCOLHER · ENTER COMEÇAR'}</p>
+      <div class="title__lang" role="group" aria-label="${UI.language}">
+        ${LANGS.map(
+          (l) =>
+            `<button class="lang ${l.id === LANG ? 'is-on' : ''}" type="button" data-lang="${l.id}" aria-pressed="${l.id === LANG}">${icon(l.flag, 2)}<span>${l.label}</span></button>`,
+        ).join('')}
+      </div>
+      <p class="title__hint">${touch ? UI.startTouch : UI.startKeys}</p>
       <div class="title__hero"><canvas aria-hidden="true"></canvas></div>
-      <p class="title__foot">© 2026 LUCAS BOROTO · FEITO PIXEL A PIXEL</p>
+      <p class="title__foot">${UI.footer}</p>
     </section>`
   hero = animateHero(app.querySelector('.title__hero canvas')!, touch ? 4 : 5)
   cleanup.push(hero.stop)
@@ -613,7 +644,17 @@ function renderTitle() {
       go('menu')
     })
   }
-  nav.set(buttons)
+  const flags = [...app.querySelectorAll<HTMLButtonElement>('.title__lang .lang')]
+  flags.forEach((f) => f.addEventListener('click', () => setLanguage(f.dataset.lang as Lang)))
+  const items = [...buttons, ...flags]
+  nav.set(items, {
+    // ←/→ alterna entre as bandeiras.
+    onSide: (dir, el, i) => {
+      if (!el.classList.contains('lang')) return false
+      if (items[i + dir]?.classList.contains('lang')) nav.select(i + dir)
+      return true
+    },
+  })
 }
 
 function bar(label: string, value: number, max: number, kind: string) {
@@ -629,7 +670,7 @@ function dialogHTML() {
         <p class="dialog__text" aria-hidden="true"></p>
         <p class="sr-only" aria-live="polite" data-live></p>
         <span class="dialog__more" aria-hidden="true" hidden>▼</span>
-        <button class="dialog__skip" type="button" hidden>PULAR ▶▶</button>
+        <button class="dialog__skip" type="button" hidden>${UI.skip}</button>
       </div>
     </div>`
 }
@@ -641,19 +682,19 @@ function renderMenu() {
         <div class="stage"><canvas class="stage__hero" aria-hidden="true"></canvas><span class="stage__shadow"></span></div>
         <div class="win plate">
           <p class="plate__name">LUCAS BOROTO</p>
-          <p class="plate__meta">NV. ${PROFILE.level} · ${PROFILE.className}</p>
-          <p class="plate__open"><span class="badge">ABERTO A VAGAS</span></p>
+          <p class="plate__meta">${UI.level} ${PROFILE.level} · ${PROFILE.className}</p>
+          <p class="plate__open"><span class="badge">${UI.openShort}</span></p>
           ${bar('HP', 100, 100, 'hp')}
           ${bar('MP', 100, 100, 'mp')}
         </div>
       </div>
-      <nav class="win menu" aria-label="Menu principal">
+      <nav class="win menu" aria-label="${UI.mainMenu}">
         ${MENU.map(
           (m) => `
           <button class="cmd" type="button" data-route="${m.route}">
             ${cursor()}<span class="cmd__icon">${icon(m.icon, 3)}</span>
             <span class="cmd__label">${m.label}<small lang="ja">${m.jp}</small></span>
-            ${(SECTIONS as string[]).includes(m.route) ? `<span class="cmd__star ${save.visited.includes(m.route as Section) ? 'is-on' : ''}" aria-label="${save.visited.includes(m.route as Section) ? 'visitado' : 'não visitado'}">★</span>` : ''}
+            ${(SECTIONS as string[]).includes(m.route) ? `<span class="cmd__star ${save.visited.includes(m.route as Section) ? 'is-on' : ''}" aria-label="${save.visited.includes(m.route as Section) ? UI.visited : UI.notVisited}">★</span>` : ''}
           </button>`,
         ).join('')}
       </nav>
@@ -709,7 +750,7 @@ function renderMenu() {
   dialogMode = true
   menu.inert = true
   skip.hidden = false
-  const lines = (touch ? INTRO.touch : INTRO.keyboard).map((l) => l.replace('{n}', String(MY_SECRETS.length)))
+  const lines = (touch ? INTRO.touch : INTRO.keyboard).map((l) => l.replace('{n}', String(mySecrets().length)))
   let line = 0
   const say = async () => {
     more.hidden = true
@@ -757,7 +798,7 @@ function screen(r: Route, ic: IconName, body: string) {
   app.innerHTML = `
     <section class="screen screen--${r}">
       <header class="screen__head">
-        <button class="win back" type="button" data-back aria-label="Voltar ao menu">◀ <span>${touch ? 'VOLTAR' : 'ESC'}</span></button>
+        <button class="win back" type="button" data-back aria-label="${UI.backAria}">◀ <span>${touch ? UI.backTouch : 'ESC'}</span></button>
         <h1 class="win screen__title">${icon(ic, 3)}<span>${m.label}</span><small lang="ja">${m.jp}</small></h1>
       </header>
       <div class="screen__body">${body}</div>
@@ -776,32 +817,32 @@ function renderStatus() {
         <div class="status__id">
           <h2 class="status__name">LUCAS BOROTO</h2>
           <p class="status__class">${PROFILE.className}</p>
-          <p class="status__open"><span class="badge">ABERTO A OPORTUNIDADES</span><span>${esc(PROFILE.openTo)}</span></p>
+          <p class="status__open"><span class="badge">${UI.open}</span><span>${esc(PROFILE.openTo)}</span></p>
           <dl class="kv">
-            <div><dt>NV.</dt><dd>${PROFILE.level} <small>${esc(PROFILE.levelNote)}</small></dd></div>
-            <div><dt>LOCAL</dt><dd>${esc(PROFILE.location)}</dd></div>
+            <div><dt>${UI.level}</dt><dd>${PROFILE.level} <small>${esc(PROFILE.levelNote)}</small></dd></div>
+            <div><dt>${UI.location}</dt><dd>${esc(PROFILE.location)}</dd></div>
           </dl>
           ${bar('HP', 100, 100, 'hp')}
           ${bar('MP', 100, 100, 'mp')}
           <div class="exp">
-            <p class="exp__label">EXP PARA O NV. ${PROFILE.level + 1}</p>
+            <p class="exp__label">${fmt(UI.expTo, { level: PROFILE.level + 1 })}</p>
             <div class="bar bar--exp"><i style="--v:${PROFILE.expPercent}%"></i></div>
             <p class="exp__next">${esc(PROFILE.nextLevel)}</p>
           </div>
         </div>
       </div>
       <div class="win status__stats">
-        <h2 class="sub">ATRIBUTOS</h2>
+        <h2 class="sub">${UI.stats}</h2>
         <ul class="stats">
           ${PROFILE.stats.map((s) => `<li><span>${s.label}</span><b>${s.value}</b><i style="--v:${s.value}%"></i></li>`).join('')}
         </ul>
-        <h2 class="sub">EQUIPAMENTO</h2>
+        <h2 class="sub">${UI.equipment}</h2>
         <ul class="equip">
           ${PROFILE.equipment.map((e) => `<li>${icon(e.icon, 2)}<span>${e.slot}</span><b>${esc(e.item)}</b></li>`).join('')}
         </ul>
       </div>
       <div class="win status__bio">
-        <h2 class="sub">SOBRE</h2>
+        <h2 class="sub">${UI.about}</h2>
         ${PROFILE.bio.map((p) => `<p>${esc(p)}</p>`).join('')}
       </div>
     </div>`,
@@ -831,7 +872,7 @@ function renderSkills() {
       <p class="tag">${esc(s.type)}</p>
       <h2 class="detail__name">${icon(s.icon, 3)}<span>${esc(s.name)}</span></h2>
       <p class="detail__text">${esc(s.text)}</p>
-      <p class="detail__meta"><span>USADO EM</span>${esc(s.usedIn)}</p>`
+      <p class="detail__meta"><span>${UI.usedIn}</span>${esc(s.usedIn)}</p>`
     detail.classList.remove('pop')
     void detail.offsetWidth
     detail.classList.add('pop')
@@ -844,14 +885,14 @@ function renderSkills() {
 
 function questDetail(q: Quest) {
   return `
-    <p class="tag">MISSÃO ${q.kind}</p>
+    <p class="tag">${q.kind === 'main' ? UI.questMain : UI.questSide}</p>
     <h2 class="detail__name">${icon(q.icon, 3)}<span>${esc(q.name)}</span></h2>
-    <p class="detail__status"><span class="badge ${q.status === 'CONCLUÍDA' ? 'badge--done' : 'badge--wip'}">${q.status}</span>${esc(q.when)}</p>
-    <h3 class="sub">OBJETIVO</h3>
+    <p class="detail__status"><span class="badge ${q.status === 'done' ? 'badge--done' : 'badge--wip'}">${q.status === 'done' ? UI.done : UI.wip}</span>${esc(q.when)}</p>
+    <h3 class="sub">${UI.goal}</h3>
     <p class="detail__text">${esc(q.goal)}</p>
-    <h3 class="sub">GRUPO</h3>
+    <h3 class="sub">${UI.party}</h3>
     <p class="detail__text">${esc(q.party)}</p>
-    <h3 class="sub">RECOMPENSAS</h3>
+    <h3 class="sub">${UI.loot}</h3>
     <ul class="loot">${q.loot.map((l) => `<li>${icon('coin', 2)}<span>${esc(l)}</span></li>`).join('')}</ul>
     ${
       q.links.length
@@ -871,8 +912,8 @@ function renderQuests() {
           (q) => `
           <li><button class="cmd cmd--sm quest" type="button">
             ${cursor()}${icon(q.icon, 2)}
-            <span class="quest__name">${esc(q.name)}<small>${q.kind}</small></span>
-            <span class="badge ${q.status === 'CONCLUÍDA' ? 'badge--done' : 'badge--wip'}" title="${q.status}">${q.status === 'CONCLUÍDA' ? '✓' : '…'}</span>
+            <span class="quest__name">${esc(q.name)}<small>${q.kind === 'main' ? UI.kindMain : UI.kindSide}</small></span>
+            <span class="badge ${q.status === 'done' ? 'badge--done' : 'badge--wip'}" title="${q.status === 'done' ? UI.done : UI.wip}">${q.status === 'done' ? '✓' : '…'}</span>
           </button></li>`,
         ).join('')}
       </ul>
@@ -914,7 +955,7 @@ function renderJourney() {
           <span class="journey__when">${esc(j.when)}</span>
           <span class="journey__dot">${icon(j.icon, 2)}</span>
           <span class="journey__body"><span class="journey__title">${esc(j.title)}</span><span class="journey__place">${esc(j.place)}</span></span>
-          ${j.badge ? `<span class="badge ${j.badge === 'ATUAL' ? 'badge--wip' : 'badge--done'}">${esc(j.badge)}</span>` : ''}
+          ${j.badge ? `<span class="badge ${j.badge === 'now' ? 'badge--wip' : 'badge--done'}">${j.badge === 'now' ? UI.badgeNow : UI.badgeNew}</span>` : ''}
         </li>`,
       ).join('')}
     </ol>`,
@@ -930,18 +971,18 @@ function renderContact() {
     'letter',
     `
     <div class="win letter">
-      <div class="letter__head">${icon('letter', 5)}<h2>UMA CARTA PARA VOCÊ</h2></div>
-      <p class="letter__text"><span class="badge">ABERTO A OPORTUNIDADES</span> ${esc(PROFILE.openTo)}.</p>
-      <p class="letter__text">Quer conversar sobre um projeto, uma vaga ou o Casamy? Me chame em qualquer um destes canais.</p>
+      <div class="letter__head">${icon('letter', 5)}<h2>${UI.letterTitle}</h2></div>
+      <p class="letter__text"><span class="badge">${UI.open}</span> ${esc(PROFILE.openTo)}.</p>
+      <p class="letter__text">${UI.letterBody}</p>
       <ul class="contact" role="list">
         ${LINKS.map(
           (l) => `
           <li><a class="cmd cmd--sm" href="${l.href}" ${l.copy ? 'data-copy' : 'target="_blank" rel="noopener noreferrer"'}>
-            ${cursor()}${icon(l.icon, 2, 'contact__icon')}<span class="contact__label">${l.label}</span><span class="contact__handle">${esc(l.handle)} ${l.copy ? '<small>(copiar)</small>' : '↗'}</span>
+            ${cursor()}${icon(l.icon, 2, 'contact__icon')}<span class="contact__label">${l.label}</span><span class="contact__handle">${esc(l.handle)} ${l.copy ? `<small>${UI.copy}</small>` : '↗'}</span>
           </a></li>`,
         ).join('')}
       </ul>
-      ${complete ? `<p class="letter__ps">${icon('star', 2)} P.S.: você explorou o portfólio inteiro. Obrigado por jogar!</p>` : ''}
+      ${complete ? `<p class="letter__ps">${icon('star', 2)} ${UI.ps}</p>` : ''}
       <p class="letter__sign">— Lucas</p>
     </div>`,
   )
@@ -954,7 +995,7 @@ function renderContact() {
       e.preventDefault()
       const address = a.href.replace(/^mailto:/, '')
       ;(navigator.clipboard?.writeText(address) ?? Promise.reject())
-        .then(() => toast(`${icon('letter', 3)}<span>E-MAIL COPIADO!</span>`, 'star'))
+        .then(() => toast(`${icon('mail', 3)}<span>${UI.copied}</span>`, 'star'))
         .catch(() => (location.href = a.href))
     }),
   )
@@ -963,16 +1004,16 @@ function renderContact() {
 
 function renderSecrets(start = 0) {
   const n = foundCount()
-  const total = MY_SECRETS.length
+  const total = mySecrets().length
   screen(
     'secrets',
     'chest',
     `
     <div class="win secrets">
-      <p class="secrets__lead">Este portfólio esconde <b>${total} segredos</b>. Você achou <b>${n}</b>.${n === total ? ' Nada escapa de você!' : ''}</p>
+      <p class="secrets__lead">${fmt(UI.secretsLead, { total, n })}${n === total ? UI.secretsAll : ''}</p>
       <div class="bar bar--exp"><i style="--v:${Math.round((n / total) * 100)}%"></i></div>
       <ul class="secrets__list" role="list">
-        ${MY_SECRETS.map((s) => {
+        ${mySecrets().map((s) => {
           const ok = save.secrets.includes(s.id)
           return `
           <li class="secret ${ok ? 'is-found' : ''}" tabindex="-1">
@@ -984,58 +1025,90 @@ function renderSecrets(start = 0) {
           </li>`
         }).join('')}
       </ul>
-      <p class="secrets__note">${touch ? 'Pistas para celular. No computador, alguns segredos são diferentes.' : 'Pistas para computador. No celular, alguns segredos são diferentes.'}</p>
+      <p class="secrets__note">${touch ? UI.secretsNoteTouch : UI.secretsNotePc}</p>
     </div>`,
   )
   nav.set([...app.querySelectorAll<HTMLElement>('.secret')], { start })
 }
 
+type OptionValue = boolean | TextSpeed | Lang
 type Option = {
   key: keyof Settings
   label: string
-  values: (boolean | TextSpeed)[]
-  show: (v: boolean | TextSpeed) => string
+  values: OptionValue[]
+  show: (v: OptionValue) => string
 }
 
-const OPTIONS: Option[] = [
-  { key: 'sfx', label: 'EFEITOS SONOROS', values: [true, false], show: (v) => (v ? 'LIGADO' : 'DESLIGADO') },
-  { key: 'music', label: 'MÚSICA', values: [false, true], show: (v) => (v ? 'LIGADA' : 'DESLIGADA') },
-  { key: 'crt', label: 'EFEITO CRT', values: [true, false], show: (v) => (v ? 'LIGADO' : 'DESLIGADO') },
-  { key: 'sakura', label: 'SAKURA', values: [true, false], show: (v) => (v ? 'LIGADA' : 'DESLIGADA') },
-  { key: 'textSpeed', label: 'TEXTO', values: ['lenta', 'normal', 'rápida'], show: (v) => String(v).toUpperCase() },
-]
+/** As opções no idioma atual (os rótulos mudam quando o idioma muda). */
+function options(): Option[] {
+  const onOff = (v: OptionValue) => (v ? UI.on : UI.off)
+  const onOffF = (v: OptionValue) => (v ? UI.onF : UI.offF)
+  const speed: Record<TextSpeed, string> = { lenta: UI.speedSlow, normal: UI.speedNormal, rápida: UI.speedFast }
+  return [
+    { key: 'lang', label: UI.optLang, values: LANGS.map((l) => l.id), show: (v) => LANGS.find((l) => l.id === v)?.label ?? '' },
+    { key: 'sfx', label: UI.optSfx, values: [true, false], show: onOff },
+    { key: 'music', label: UI.optMusic, values: [false, true], show: onOffF },
+    { key: 'crt', label: UI.optCrt, values: [true, false], show: onOff },
+    { key: 'sakura', label: UI.optSakura, values: [true, false], show: onOffF },
+    { key: 'textSpeed', label: UI.optText, values: ['lenta', 'normal', 'rápida'], show: (v) => speed[v as TextSpeed] },
+  ]
+}
+
+/** Valor atual de uma opção (o idioma "vazio" é o do navegador, já aplicado em LANG). */
+const current = (key: keyof Settings): OptionValue => (key === 'lang' ? save.settings.lang || LANG : save.settings[key])
 
 function applySettings() {
   document.body.classList.toggle('crt-off', !save.settings.crt)
   scene.setSakura(save.settings.sakura)
 }
 
+/** Troca o idioma e redesenha a tela atual, mantendo o cursor no mesmo lugar. */
+function setLanguage(lang: Lang) {
+  save.settings.lang = lang
+  persist()
+  if (lang === LANG) return
+  setLang(lang)
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en'
+  sound.select()
+  const keep = nav.index
+  renderHud()
+  render(route)
+  if (keep < nav.items.length) nav.select(keep, false)
+}
+
 function renderOptions(start = 0) {
   let confirmReset = false
+  const opts = options()
   screen(
     'options',
     'gear',
     `
     <div class="win options">
       <ul class="options__list" role="list">
-        ${OPTIONS.map(
-          (o) => `
+        ${opts
+          .map(
+            (o) => `
           <li><button class="cmd cmd--sm option" type="button" data-key="${o.key}">
             ${cursor()}<span class="option__label">${o.label}</span>
-            <span class="option__value">◀ <b>${o.show(save.settings[o.key])}</b> ▶</span>
+            <span class="option__value">◀ <b>${o.show(current(o.key))}</b> ▶</span>
           </button></li>`,
-        ).join('')}
-        <li><button class="cmd cmd--sm option option--danger" type="button" data-reset>${cursor()}<span class="option__label">APAGAR PROGRESSO</span><span class="option__value"><b data-reset-label>★ ${save.visited.length}/${SECTIONS.length}</b></span></button></li>
+          )
+          .join('')}
+        <li><button class="cmd cmd--sm option option--danger" type="button" data-reset>${cursor()}<span class="option__label">${UI.reset}</span><span class="option__value"><b data-reset-label>★ ${save.visited.length}/${SECTIONS.length}</b></span></button></li>
       </ul>
-      <p class="options__hint">${touch ? 'Toque para trocar.' : '←→ ou Enter para trocar · M liga/desliga o som'}</p>
+      <p class="options__hint">${touch ? UI.optionsHintTouch : UI.optionsHintKeys}</p>
     </div>`,
   )
   const buttons = [...app.querySelectorAll<HTMLButtonElement>('.option')]
   const cycle = (i: number, dir: -1 | 1) => {
-    const o = OPTIONS[i]
+    const o = opts[i]
     if (!o) return false
-    const cur = o.values.indexOf(save.settings[o.key])
+    const cur = o.values.indexOf(current(o.key))
     const next = o.values[(cur + dir + o.values.length) % o.values.length]
+    if (o.key === 'lang') {
+      setLanguage(next as Lang)
+      return true
+    }
     ;(save.settings as Record<string, unknown>)[o.key] = next
     if (o.key === 'music') setMusic(next as boolean)
     if (o.key === 'sfx' && !next && save.settings.music) {
@@ -1047,26 +1120,26 @@ function renderOptions(start = 0) {
     updateHud()
     sound.toggle()
     buttons.forEach((b, j) => {
-      const opt = OPTIONS[j]
-      if (opt) b.querySelector('.option__value b')!.textContent = opt.show(save.settings[opt.key])
+      const opt = opts[j]
+      if (opt) b.querySelector('.option__value b')!.textContent = opt.show(current(opt.key))
     })
     return true
   }
   buttons.forEach((b, i) =>
     b.addEventListener('click', () => {
-      if (i < OPTIONS.length) return void cycle(i, 1)
+      if (i < opts.length) return void cycle(i, 1)
       const label = b.querySelector('[data-reset-label]')!
       if (!confirmReset) {
         confirmReset = true
         sound.move()
-        label.textContent = 'CONFIRMAR?'
+        label.textContent = UI.resetConfirm
         return
       }
       resetSave()
       updateHud()
       sound.back()
-      label.textContent = 'APAGADO'
-      toast('<span>PROGRESSO APAGADO</span>')
+      label.textContent = UI.resetDone
+      toast(`<span>${UI.erased}</span>`)
     }),
   )
   nav.set(buttons, {
@@ -1086,5 +1159,6 @@ function renderOptions(start = 0) {
 applySettings()
 pixelAccents()
 renderHud()
+startClock()
 render(parse())
 requestAnimationFrame(() => document.body.classList.add('is-ready'))

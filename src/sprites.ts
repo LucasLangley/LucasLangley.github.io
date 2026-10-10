@@ -31,6 +31,9 @@ export const PALETTE: Record<string, string> = {
   q: '#a3966a', // coelho da lua
   e: '#7a5530', // madeira do pilão
   o: '#fffaf0', // mochi
+  // Bandeiras
+  Q: '#1f9d55',
+  u: '#2b4fb3',
   // Logo do Casamy (cores tiradas do ícone oficial do app)
   f: '#faf7f2',
   k: '#1a1916',
@@ -288,14 +291,40 @@ export const ICONS = {
     'KwKKKKKKKKwK',
     '.KKKKKKKKKK.',
   ],
+  flagBR: [
+    '.KKKKKKKKKKKK.',
+    'KQQQQQYYQQQQQK',
+    'KQQQYYYYYYQQQK',
+    'KQYYYuuuuYYYQK',
+    'KYYYuuuuuuYYYK',
+    'KYYYwwwwwwYYYK',
+    'KYYYuuuuuuYYYK',
+    'KQYYYuuuuYYYQK',
+    'KQQQYYYYYYQQQK',
+    'KQQQQQYYQQQQQK',
+    '.KKKKKKKKKKKK.',
+  ],
+  flagUS: [
+    '.KKKKKKKKKKKK.',
+    'KuuuuuuRRRRRRK',
+    'KuwuwuuWWWWWWK',
+    'KuuwuwuRRRRRRK',
+    'KuwuwuuWWWWWWK',
+    'KuuuuuuRRRRRRK',
+    'KWWWWWWWWWWWWK',
+    'KRRRRRRRRRRRRK',
+    'KWWWWWWWWWWWWK',
+    'KRRRRRRRRRRRRK',
+    '.KKKKKKKKKKKK.',
+  ],
   mail: [
     'KKKKKKKKKKKK',
     'KWKWWWWWWKWK',
     'KWWKWWWWKWWK',
     'KWWWKWWKWWWK',
     'KWWWWKKWWWWK',
-    'KWWWWWWWRRWK',
-    'KWWWWWWWRRWK',
+    'KWWWWWWWWWWK',
+    'KWWWWWWWWWWK',
     'KKKKKKKKKKKK',
   ],
   chest: [

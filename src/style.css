@@ -1682,3 +1682,38 @@ body.over-moon #app {
   font-size: 15px;
   color: #6a5f80;
 }
+
+/* ------------------------------------------------------------ idioma (tela inicial) */
+
+.title__lang {
+  display: flex;
+  gap: 14px;
+  animation: fade 0.5s 0.8s steps(4) both;
+}
+
+.lang {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 3px solid transparent;
+  background: rgb(11 11 30 / 0.55);
+  box-shadow: 0 0 0 2px var(--ink);
+  font: 10px/1 var(--display);
+  color: var(--muted);
+  text-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+  outline: none;
+}
+
+.lang.is-on {
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+.lang.is-active,
+.lang:hover {
+  color: var(--gold);
+  background: rgb(68 86 216 / 0.7);
+}

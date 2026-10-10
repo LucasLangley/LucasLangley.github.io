@@ -1,5 +1,5 @@
 // "Save" do visitante no localStorage. Tudo tolera storage bloqueado (aba anônima, cookies desligados).
-import type { SecretId, Section } from './data.ts'
+import type { Lang, SecretId, Section } from './data.ts'
 
 export type TextSpeed = 'lenta' | 'normal' | 'rápida'
 
@@ -9,6 +9,8 @@ export type Settings = {
   crt: boolean
   sakura: boolean
   textSpeed: TextSpeed
+  /** '' = ainda não escolheu: segue o idioma do navegador. */
+  lang: Lang | ''
 }
 
 type Save = {
@@ -28,7 +30,7 @@ const DEFAULTS: Save = {
   playMs: 0,
   introSeen: false,
   secret: false,
-  settings: { sfx: true, music: false, crt: true, sakura: true, textSpeed: 'normal' },
+  settings: { sfx: true, music: false, crt: true, sakura: true, textSpeed: 'normal', lang: '' },
 }
 
 function read(): Save {
