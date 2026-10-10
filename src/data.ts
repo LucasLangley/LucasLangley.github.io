@@ -9,6 +9,8 @@ export const PROFILE = {
   level: 1,
   levelNote: '1 app na App Store',
   nextLevel: 'Casamy no Android e na web',
+  // Do LinkedIn (Open to work): onde topa trabalhar.
+  openTo: 'Presencial, híbrido ou remoto, a partir de Taubaté (SP)',
   expPercent: 35,
   bio: [
     'Sou programador júnior na Hermanos TI, em Taubaté, desde junho de 2025.',
@@ -16,14 +18,13 @@ export const PROFILE = {
     'Uso IA no fluxo diário de desenvolvimento para iterar rápido e lançar atualizações com frequência.',
     'Comecei por redes e segurança, com a trilha da Cisco Networking Academy (CCNA e cibersegurança).',
   ],
-  // Autoavaliação de brincadeira: ajuste à vontade.
   stats: [
-    { label: 'CÓDIGO', value: 68 },
-    { label: 'PRODUTO', value: 74 },
-    { label: 'DESIGN', value: 61 },
-    { label: 'REDES', value: 66 },
-    { label: 'IA', value: 82 },
-    { label: 'FÔLEGO', value: 90 },
+    { label: 'CÓDIGO', value: 100 },
+    { label: 'PRODUTO', value: 100 },
+    { label: 'DESIGN', value: 100 },
+    { label: 'REDES', value: 100 },
+    { label: 'IA', value: 100 },
+    { label: 'FÔLEGO', value: 100 },
   ],
   equipment: [
     { slot: 'ARMA', item: 'TypeScript', icon: 'scroll' },
@@ -218,9 +219,11 @@ export const JOURNEY: JourneyEntry[] = [
   { when: 'FORMAÇÃO', title: 'SENAI Taubaté', place: 'Escola e Faculdade SENAI Félix Guisard', icon: 'scroll' },
 ]
 
-export type ContactLink = { label: string; handle: string; href: string; icon: IconName }
+/** `copy`: o clique copia o texto em vez de abrir o link (e-mail sem depender de app de e-mail). */
+export type ContactLink = { label: string; handle: string; href: string; icon: IconName; copy?: boolean }
 
 export const LINKS: ContactLink[] = [
+  { label: 'E-MAIL', handle: 'lucasgrok@mail.grokbot.com', href: 'mailto:lucasgrok@mail.grokbot.com', icon: 'mail', copy: true },
   { label: 'LINKEDIN', handle: 'Lucas Boroto', href: 'https://www.linkedin.com/in/lucas-boroto/', icon: 'linkedin' },
   { label: 'GITHUB', handle: 'LucasLangley', href: 'https://github.com/LucasLangley', icon: 'github' },
   { label: 'X', handle: '@Borotos00', href: 'https://x.com/Borotos00', icon: 'x' },

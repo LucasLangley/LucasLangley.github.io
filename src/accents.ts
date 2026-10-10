@@ -1,6 +1,6 @@
 // A Press Start 2P encolhe a maiúscula acentuada para o acento caber na mesma célula 8x8 ("MISSÕES" vira "MISSõES").
 // Aqui a letra aparece em tamanho cheio e o acento é desenhado por cima, em pixels de 1/8 de em.
-// O caractere original continua no texto para leitores de tela.
+// O caractere original fica no texto (transparente), então copiar, buscar e ler em voz alta dão a palavra certa.
 
 const MARKS: Record<string, [number, number][]> = {
   acute: [[4, -3], [5, -3], [3, -2], [4, -2]],
@@ -33,7 +33,8 @@ function css(): string {
     return `.acc--${name}::after { box-shadow: ${[...front, ...shade].join(', ')}; }`
   })
   return `
-    .acc { position: relative; --u: 0.125em; }
+    .acc { position: relative; --u: 0.125em; -webkit-text-fill-color: transparent; text-shadow: none; }
+    .acc::before { content: attr(data-base); position: absolute; left: 0; top: 0; -webkit-text-fill-color: currentColor; text-shadow: var(--acc-shadow, none); pointer-events: none; }
     .acc::after { content: ''; position: absolute; left: 0; top: 0; width: var(--u); height: var(--u); pointer-events: none; }
     .letter .acc::after, .btn .acc::after, .badge .acc::after { --ink: transparent; }
     ${rules.join('\n')}`
@@ -46,6 +47,7 @@ function usesPixelFont(el: Element): boolean {
 function fix(node: Text) {
   const parent = node.parentElement
   if (!parent || !ACCENTED.test(node.data) || parent.closest('.acc') || !usesPixelFont(parent)) return
+  const shadow = getComputedStyle(parent).textShadow
   const frag = document.createDocumentFragment()
   let plain = ''
   for (const ch of node.data) {
@@ -56,15 +58,12 @@ function fix(node: Text) {
     }
     if (plain) frag.append(plain)
     plain = ''
+    // A letra acentuada real fica transparente; a letra cheia (::before) e o acento (::after) são desenhados por cima.
     const span = document.createElement('span')
     span.className = `acc acc--${hit[1]}`
-    const real = document.createElement('span')
-    real.className = 'sr-only'
-    real.textContent = ch
-    const shown = document.createElement('span')
-    shown.setAttribute('aria-hidden', 'true')
-    shown.textContent = hit[0]
-    span.append(real, shown)
+    span.dataset.base = hit[0]
+    span.style.setProperty('--acc-shadow', shadow)
+    span.textContent = ch
     frag.append(span)
   }
   if (plain) frag.append(plain)

@@ -642,6 +642,7 @@ function renderMenu() {
         <div class="win plate">
           <p class="plate__name">LUCAS BOROTO</p>
           <p class="plate__meta">NV. ${PROFILE.level} · ${PROFILE.className}</p>
+          <p class="plate__open"><span class="badge">ABERTO A VAGAS</span></p>
           ${bar('HP', 100, 100, 'hp')}
           ${bar('MP', 100, 100, 'mp')}
         </div>
@@ -775,6 +776,7 @@ function renderStatus() {
         <div class="status__id">
           <h2 class="status__name">LUCAS BOROTO</h2>
           <p class="status__class">${PROFILE.className}</p>
+          <p class="status__open"><span class="badge">ABERTO A OPORTUNIDADES</span><span>${esc(PROFILE.openTo)}</span></p>
           <dl class="kv">
             <div><dt>NV.</dt><dd>${PROFILE.level} <small>${esc(PROFILE.levelNote)}</small></dd></div>
             <div><dt>LOCAL</dt><dd>${esc(PROFILE.location)}</dd></div>
@@ -929,12 +931,13 @@ function renderContact() {
     `
     <div class="win letter">
       <div class="letter__head">${icon('letter', 5)}<h2>UMA CARTA PARA VOCÊ</h2></div>
+      <p class="letter__text"><span class="badge">ABERTO A OPORTUNIDADES</span> ${esc(PROFILE.openTo)}.</p>
       <p class="letter__text">Quer conversar sobre um projeto, uma vaga ou o Casamy? Me chame em qualquer um destes canais.</p>
       <ul class="contact" role="list">
         ${LINKS.map(
           (l) => `
-          <li><a class="cmd cmd--sm" href="${l.href}" target="_blank" rel="noopener noreferrer">
-            ${cursor()}${icon(l.icon, 2, 'contact__icon')}<span class="contact__label">${l.label}</span><span class="contact__handle">${esc(l.handle)} ↗</span>
+          <li><a class="cmd cmd--sm" href="${l.href}" ${l.copy ? 'data-copy' : 'target="_blank" rel="noopener noreferrer"'}>
+            ${cursor()}${icon(l.icon, 2, 'contact__icon')}<span class="contact__label">${l.label}</span><span class="contact__handle">${esc(l.handle)} ${l.copy ? '<small>(copiar)</small>' : '↗'}</span>
           </a></li>`,
         ).join('')}
       </ul>
@@ -943,7 +946,18 @@ function renderContact() {
     </div>`,
   )
   const links = [...app.querySelectorAll<HTMLAnchorElement>('.contact .cmd')]
-  links.forEach((a) => a.addEventListener('click', () => sound.select()))
+  links.forEach((a) =>
+    a.addEventListener('click', (e) => {
+      sound.select()
+      if (!a.hasAttribute('data-copy')) return
+      // Copia o e-mail; se o navegador não deixar, segue o mailto normal.
+      e.preventDefault()
+      const address = a.href.replace(/^mailto:/, '')
+      ;(navigator.clipboard?.writeText(address) ?? Promise.reject())
+        .then(() => toast(`${icon('letter', 3)}<span>E-MAIL COPIADO!</span>`, 'star'))
+        .catch(() => (location.href = a.href))
+    }),
+  )
   nav.set(links)
 }
 

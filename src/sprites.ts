@@ -288,6 +288,16 @@ export const ICONS = {
     'KwKKKKKKKKwK',
     '.KKKKKKKKKK.',
   ],
+  mail: [
+    'KKKKKKKKKKKK',
+    'KWKWWWWWWKWK',
+    'KWWKWWWWKWWK',
+    'KWWWKWWKWWWK',
+    'KWWWWKKWWWWK',
+    'KWWWWWWWRRWK',
+    'KWWWWWWWRRWK',
+    'KKKKKKKKKKKK',
+  ],
   chest: [
     '.KKKKKKKK.',
     'KeeeeeeeeK',

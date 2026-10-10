@@ -1655,3 +1655,30 @@ body.over-moon #app {
     display: none;
   }
 }
+
+/* ------------------------------------------------------------ aberto a oportunidades */
+
+.plate__open,
+.status__open {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.status__open span:last-child {
+  font: 16px/1.35 var(--body);
+  color: var(--muted);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.letter__text .badge {
+  margin-right: 6px;
+  vertical-align: 2px;
+}
+
+.contact__handle small {
+  font-size: 15px;
+  color: #6a5f80;
+}
