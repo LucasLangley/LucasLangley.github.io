@@ -619,11 +619,20 @@ if (touch) {
   })
 }
 
+/** Lili, o rosto do Lucas e o Todinho lado a lado, com os gatos sentados na linha do queixo. */
+function consoleArt(): Sprite {
+  const h = PORTRAIT.length
+  const sit = (cat: Sprite) => [...Array<string>(h - cat.length).fill('.'.repeat(cat[0].length)), ...cat]
+  const lili = sit(LILI)
+  const todinho = sit(TODINHO)
+  return PORTRAIT.map((row, i) => `${lili[i]}..${row}..${todinho[i]}`)
+}
+
 // Recado para quem abrir o DevTools: o retrato em pixels coloridos e um comando para responder.
 function consoleHello() {
   let fmt = ''
   const styles: string[] = []
-  for (const row of PORTRAIT) {
+  for (const row of consoleArt()) {
     for (const run of row.match(/(.)\1*/g) ?? []) {
       fmt += '%c' + '  '.repeat(run.length)
       styles.push(`background:${PALETTE[run[0]] ?? 'transparent'};font-size:9px;line-height:9px`)
@@ -754,8 +763,9 @@ function renderMenu() {
   mountCats(app.querySelector('.stage')!, wide() ? 4 : 2)
   hubTalk = (name, text, portrait) => {
     who.textContent = name
-    if (portrait) face.show(portrait, 7000)
-    else face.happy(900)
+    // O rosto acompanha quem fala: sem retrato próprio, volta na hora para o Lucas.
+    face.show(portrait ?? null, 7000)
+    if (!portrait) face.happy(900)
     void writer.type(text)
   }
 
@@ -775,6 +785,7 @@ function renderMenu() {
       start: lastMenuIndex,
       onMove: (_, i) => {
         who.textContent = 'LUCAS'
+        face.show(null)
         void writer.type(MENU[i].hint, { fast: true })
       },
     })

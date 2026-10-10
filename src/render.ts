@@ -123,10 +123,10 @@ export function animateHero(canvas: HTMLCanvasElement, scale: number, kind: 'ful
     sleep: (on: boolean) => {
       sleeping = on
     },
-    /** Mostra outro retrato (a Nia, por exemplo) por um tempo. */
-    show: (sprite: Sprite, ms: number) => {
+    /** Mostra outro retrato (a Nia, um gato) por um tempo; null volta na hora para o Lucas. */
+    show: (sprite: Sprite | null, ms = 0) => {
       other = sprite
-      otherUntil = performance.now() + ms
+      otherUntil = sprite ? performance.now() + ms : 0
       last = ''
     },
   }
