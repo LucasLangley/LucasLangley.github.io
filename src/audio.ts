@@ -84,6 +84,12 @@ export const sound = {
       ;[72, 76, 79, 84, 88].forEach((n, i) => tone(midi(n), t + i * 0.07, 0.12, 'square', 0.05))
     }),
   poke: () => sfx((t) => tone(midi(72), t, 0.09, 'square', 0.05, midi(84))),
+  /** Miado: sobe e desce. `pitch` muda o gato (Lili mais aguda). */
+  meow: (pitch = 1) =>
+    sfx((t) => {
+      tone(620 * pitch, t, 0.12, 'triangle', 0.09, 980 * pitch)
+      tone(980 * pitch, t + 0.12, 0.2, 'triangle', 0.08, 520 * pitch)
+    }),
   mochi: () =>
     sfx((t) => {
       for (let i = 0; i < 4; i++) {

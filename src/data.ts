@@ -2,7 +2,7 @@
 // o que não muda com o idioma e as exportações do idioma ativo (trocadas por setLang).
 import en from './i18n/en.ts'
 import pt from './i18n/pt.ts'
-import type { IconName } from './sprites.ts'
+import type { CatName, IconName } from './sprites.ts'
 
 export type Lang = 'pt' | 'en'
 
@@ -40,8 +40,11 @@ export type JourneyEntry = { when: string; title: string; place: string; icon: I
 export type Section = 'status' | 'skills' | 'quests' | 'journey' | 'contact'
 export type MenuEntry = { route: Section | 'secrets' | 'options'; label: string; jp: string; icon: IconName; hint: string }
 
-export type SecretId = 'poke' | 'sleep' | 'rabbit' | 'nia' | 'casamy' | 'konami' | 'console' | 'rotate'
+export type SecretId = 'poke' | 'sleep' | 'rabbit' | 'nia' | 'casamy' | 'konami' | 'pets' | 'console' | 'rotate'
 export type Secret = { id: SecretId; name: string; found: string; pc: string; touch: string; only?: 'pc' | 'touch' }
+
+/** Os gatos do Lucas: nome, descrição e o que dizem ao receber carinho. */
+export type Pet = { name: string; kind: string; lines: string[] }
 
 export type ContentShape = {
   profile: Profile
@@ -52,6 +55,7 @@ export type ContentShape = {
   intro: { keyboard: string[]; touch: string[]; back: string }
   eggs: { poke: Record<number, string>; [line: string]: string | Record<number, string> }
   secrets: Secret[]
+  pets: Record<CatName, Pet>
   ui: Record<string, string>
 }
 
@@ -74,6 +78,7 @@ export let MENU: MenuEntry[] = pt.menu
 export let INTRO: ContentShape['intro'] = pt.intro
 export let EGGS: typeof pt.eggs = pt.eggs
 export let SECRETS: Secret[] = pt.secrets
+export let PETS: Record<CatName, Pet> = pt.pets
 export let UI: Record<keyof typeof pt.ui, string> = pt.ui
 export let LANG: Lang = 'pt'
 
@@ -88,6 +93,7 @@ export function setLang(lang: Lang) {
   INTRO = c.intro
   EGGS = c.eggs
   SECRETS = c.secrets
+  PETS = c.pets
   UI = c.ui
 }
 

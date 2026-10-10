@@ -31,6 +31,10 @@ export const PALETTE: Record<string, string> = {
   q: '#a3966a', // coelho da lua
   e: '#7a5530', // madeira do pilão
   o: '#fffaf0', // mochi
+  // Gatos
+  d: '#2f2f3a', // pelo preto
+  a: '#d9963f', // mel
+  m: '#6b4428', // marrom
   // Bandeiras
   Q: '#1f9d55',
   u: '#2b4fb3',
@@ -137,6 +141,84 @@ export const NIA: Sprite = [
   '..KvvKKSSSSSSSSSSKKvvK..',
   '..KKKK.KKKssssKKK.KKKK..',
 ]
+
+/** Todinho: gato frajola (preto e branco), sentado de frente. */
+export const TODINHO: Sprite = [
+  '.K..........K...',
+  '.KK........KK...',
+  '.KBK......KBK...',
+  '.KddKKKKKKddK...',
+  'KddddddddddddK..',
+  'KddNNddddNNddK..',
+  'KddKNddddKNddK..',
+  'KdWWWWBBWWWWdK..',
+  '.KWWWWWWWWWWK...',
+  '..KdWWWWWWdK....',
+  '.KddWWWWWWddK...',
+  '.KddWWWWWWddK.K.',
+  '.KddWWWWWWddKKdK',
+  '.KddWWWWWWddKddK',
+  '.KdWWKddKWWdddK.',
+  '..KKKK..KKKKKK..',
+]
+
+/** Lili: gata tricolor (branca, preta e marrom, e mel), sentada de frente. */
+export const LILI: Sprite = [
+  '.K..........K...',
+  '.KK........KK...',
+  '.KBK......KBK...',
+  '.KddKKKKKKaaK...',
+  'KddddWWWWaaaaK..',
+  'KddYYWWWWYYaaK..',
+  'KddYKWWWWYKaaK..',
+  'KdWWWWBBWWWWaK..',
+  '.KWWWWWWWWWWK...',
+  '..KWWWWWWWWK....',
+  '.KaaWWWWWWmmK...',
+  '.KaaWWWWWWmmK.K.',
+  '.KaWWWWWWWWmKKaK',
+  '.KWWWWWWWWWWKaaK',
+  '.KWWWKWWKWWWaaK.',
+  '..KKKK..KKKKKK..',
+]
+
+type CatFrames = { normal: Sprite; blink: Sprite; tail: Sprite; tailBlink: Sprite }
+
+/** Quadros de um gato: normal, piscando e com a cauda abaixada (as linhas trocadas são as do olho e da cauda). */
+function catFrames(base: Sprite, blink: Record<number, string>, tail: Record<number, string>): CatFrames {
+  return {
+    normal: base,
+    blink: withRows(base, blink),
+    tail: withRows(base, tail),
+    tailBlink: withRows(withRows(base, tail), blink),
+  }
+}
+
+export const CATS = {
+  todinho: catFrames(
+    TODINHO,
+    { 5: 'KddddddddddddK..', 6: 'KddKKddddKKddK..' },
+    {
+      11: '.KddWWWWWWddK...',
+      12: '.KddWWWWWWddK...',
+      13: '.KddWWWWWWddKKK.',
+      14: '.KdWWKddKWWddddK',
+      15: '..KKKK..KKKKKKK.',
+    },
+  ),
+  lili: catFrames(
+    LILI,
+    { 5: 'KddddWWWWaaaaK..', 6: 'KddKKWWWWKKaaK..' },
+    {
+      11: '.KaaWWWWWWmmK...',
+      12: '.KaWWWWWWWWmK...',
+      13: '.KWWWWWWWWWWKKK.',
+      14: '.KWWWKWWKWWWaaaK',
+      15: '..KKKK..KKKKKKK.',
+    },
+  ),
+}
+export type CatName = keyof typeof CATS
 
 /** Coelho da lua socando mochi (月のうさぎ), dois quadros: pilão em cima e embaixo. */
 export const RABBIT: [Sprite, Sprite] = [

@@ -1717,3 +1717,53 @@ body.over-moon #app {
   color: var(--gold);
   background: rgb(68 86 216 / 0.7);
 }
+
+/* ------------------------------------------------------------ Lili e Todinho */
+
+.stage__row,
+.title__hero {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.party {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.party li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.party b {
+  display: block;
+  font: 10px var(--display);
+  font-weight: normal;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.party small {
+  display: block;
+  margin-top: 4px;
+  font: 16px/1.3 var(--body);
+  color: var(--muted);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+@media (max-width: 899px) {
+  .hub__hero {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.equip {
+  margin-bottom: 18px;
+}

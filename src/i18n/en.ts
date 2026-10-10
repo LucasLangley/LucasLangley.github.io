@@ -214,6 +214,7 @@ export default {
     keyboard: [
       'Oh, a visitor! Welcome to my portfolio.',
       "I'm Lucas: a programmer from Taubaté, Brazil, and the solo founder of Casamy.",
+      'These two are Lili and Todinho, my cats.',
       'Every section you open is worth a ★. Collect all 5!',
       'And there are {n} secrets hidden around here. Can you find them all?',
       'Arrows to choose, Enter to open, Esc to go back. Have fun!',
@@ -221,6 +222,7 @@ export default {
     touch: [
       'Oh, a visitor! Welcome to my portfolio.',
       "I'm Lucas: a programmer from Taubaté, Brazil, and the solo founder of Casamy.",
+      'These two are Lili and Todinho, my cats.',
       'Every section you open is worth a ★. Collect all 5!',
       'And there are {n} secrets hidden around here. Can you find them all?',
       'Tap an option to open it. Have fun!',
@@ -289,6 +291,13 @@ export default {
       found: 'Fireworks in the sky.',
     },
     {
+      id: 'pets',
+      name: 'HOUSE CATS',
+      pc: "Lucas isn't alone. Pet whoever is next to him.",
+      touch: "Lucas isn't alone. Pet whoever is next to him.",
+      found: 'You petted Lili and Todinho.',
+    },
+    {
       id: 'console',
       name: 'NOTE FOR DEVS',
       pc: 'Curious devs look behind the screen.',
@@ -305,6 +314,11 @@ export default {
       only: 'touch',
     },
   ],
+
+  pets: {
+    lili: { name: 'LILI', kind: 'Calico cat: white, black-brown and honey.', lines: ['Meow!', 'Mrrr…', 'Purrrr…'] },
+    todinho: { name: 'TODINHO', kind: 'Tuxedo cat, black and white.', lines: ['Meow?', 'Mrow!', 'Purrrr…'] },
+  },
 
   ui: {
     docTitle: 'Lucas Boroto · Portfolio RPG',

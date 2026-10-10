@@ -17,10 +17,11 @@ Meu portfólio em forma de menu de JRPG, em pixel art e 8 bits. Feito do zero co
 
 Cada seção aberta vale uma ★. Junte as 5.
 
-E há 7 segredos escondidos, com pistas diferentes no computador e no celular (lá, o que pede teclado vira gesto). A tela **SEGREDOS** mostra quantos você já achou.
+E há 8 segredos escondidos, com pistas diferentes no computador e no celular (lá, o que pede teclado vira gesto). A tela **SEGREDOS** mostra quantos você já achou.
 
 ## O que tem aqui
 
+- **A Lili e o Todinho**, meus gatos de verdade (tricolor e frajola), acompanham o personagem: piscam, mexem a cauda, miam com carinho e cochilam junto.
 - **Sprites desenhados como texto** em [`src/sprites.ts`](src/sprites.ts): cada caractere é um pixel.
 - **Cenário em canvas** de baixa resolução ([`src/scene.ts`](src/scene.ts)): céu pontilhado, lua, estrelas, cidade com janelas que acendem, estrelas cadentes e fogos. A cidade muda a cada visita.
 - **Sons e música 8-bit gerados no navegador** com WebAudio ([`src/audio.ts`](src/audio.ts)), sem nenhum arquivo de áudio.

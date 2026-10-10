@@ -1,7 +1,7 @@
 // Gera uma folha de prévia dos sprites em .sprite-preview/sheet.png e avisa linhas com largura errada.
 // Com nomes (npm run sprites -- casamy linkedin), mostra só esses, maiores.
 import { mkdirSync, writeFileSync } from 'node:fs'
-import { HERO, HERO_BLINK, HERO_HAPPY, ICONS, NIA, PORTRAIT, RABBIT, spriteToRGBA, type Sprite } from '../src/sprites.ts'
+import { CATS, HERO, HERO_BLINK, HERO_HAPPY, ICONS, LILI, NIA, PORTRAIT, RABBIT, TODINHO, spriteToRGBA, type Sprite } from '../src/sprites.ts'
 import { encodePNG } from './png.ts'
 
 const only = process.argv.slice(2)
@@ -15,6 +15,10 @@ const all: [string, Sprite][] = [
   ['happy', HERO_HAPPY],
   ['portrait', PORTRAIT],
   ['nia', NIA],
+  ['todinho', TODINHO],
+  ['lili', LILI],
+  ['lili-tail', CATS.lili.tailBlink],
+  ['todinho-tail', CATS.todinho.tailBlink],
   ['rabbit-a', RABBIT[0]],
   ['rabbit-b', RABBIT[1]],
   ...Object.entries(ICONS),

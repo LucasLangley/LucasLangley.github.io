@@ -215,6 +215,7 @@ export default {
     keyboard: [
       'Ah, um visitante! Bem-vindo ao meu portfólio.',
       'Eu sou o Lucas: programador em Taubaté e fundador solo do Casamy.',
+      'Esses dois aqui são a Lili e o Todinho, meus gatos.',
       'Cada seção que você abrir vale uma ★. Junte as 5!',
       'E tem {n} segredos escondidos por aqui. Consegue achar todos?',
       'Setas para escolher, Enter para abrir, Esc para voltar. Boa aventura!',
@@ -222,6 +223,7 @@ export default {
     touch: [
       'Ah, um visitante! Bem-vindo ao meu portfólio.',
       'Eu sou o Lucas: programador em Taubaté e fundador solo do Casamy.',
+      'Esses dois aqui são a Lili e o Todinho, meus gatos.',
       'Cada seção que você abrir vale uma ★. Junte as 5!',
       'E tem {n} segredos escondidos por aqui. Consegue achar todos?',
       'Toque numa opção para abrir. Boa aventura!',
@@ -295,6 +297,13 @@ export default {
       found: 'Fogos no céu.',
     },
     {
+      id: 'pets',
+      name: 'GATOS DA CASA',
+      pc: 'O Lucas não está sozinho. Faça carinho em quem está do lado dele.',
+      touch: 'O Lucas não está sozinho. Faça carinho em quem está do lado dele.',
+      found: 'Você fez carinho na Lili e no Todinho.',
+    },
+    {
       id: 'console',
       name: 'RECADO PARA DEVS',
       pc: 'Devs curiosos olham por trás da tela.',
@@ -311,6 +320,11 @@ export default {
       only: 'touch',
     },
   ],
+
+  pets: {
+    lili: { name: 'LILI', kind: 'Gata tricolor: branca, preta e marrom, e mel.', lines: ['Miau!', 'Mrrr…', 'Prrrrr…'] },
+    todinho: { name: 'TODINHO', kind: 'Gato frajola, preto e branco.', lines: ['Miau?', 'Mrau!', 'Prrrrr…'] },
+  },
 
   // Textos fixos da interface. {n}, {total} e {level} são trocados na hora.
   ui: {

@@ -1,5 +1,6 @@
 // Desenha sprites no DOM: canvas animado para o personagem, <img> em cache para os ícones.
 import {
+  CATS,
   breathe,
   HERO,
   HERO_BLINK,
@@ -9,6 +10,7 @@ import {
   PORTRAIT,
   PORTRAIT_BLINK,
   PORTRAIT_HAPPY,
+  type CatName,
   type IconName,
   type Sprite,
 } from './sprites.ts'
@@ -126,6 +128,50 @@ export function animateHero(canvas: HTMLCanvasElement, scale: number, kind: 'ful
       other = sprite
       otherUntil = performance.now() + ms
       last = ''
+    },
+  }
+}
+
+/** Gato animado: pisca, mexe a cauda de vez em quando e dorme junto com o Lucas. */
+export function animateCat(canvas: HTMLCanvasElement, cat: CatName, scale: number) {
+  const frames = CATS[cat]
+  canvas.width = frames.normal[0].length * scale
+  canvas.height = frames.normal.length * scale
+  canvas.classList.add('px')
+  const ctx = canvas.getContext('2d')!
+  let sleeping = false
+  let blinkUntil = 0
+  let tailUntil = 0
+  let nextBlink = performance.now() + 800 + Math.random() * 3000
+  let nextTail = performance.now() + 1500 + Math.random() * 2500
+  let last = ''
+
+  const tick = () => {
+    const now = performance.now()
+    if (now > nextBlink) {
+      blinkUntil = now + 160
+      nextBlink = now + 2200 + Math.random() * 3500
+    }
+    if (now > nextTail && !reducedMotion()) {
+      tailUntil = now + 450
+      nextTail = now + 1800 + Math.random() * 3000
+    }
+    const eyes = sleeping || now < blinkUntil
+    const tail = !sleeping && now < tailUntil
+    const key = `${eyes}${tail}`
+    if (key === last) return
+    last = key
+    const sprite = tail ? (eyes ? frames.tailBlink : frames.tail) : eyes ? frames.blink : frames.normal
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    drawSprite(ctx, sprite, scale)
+  }
+
+  tick()
+  const id = window.setInterval(tick, 60)
+  return {
+    stop: () => window.clearInterval(id),
+    sleep: (on: boolean) => {
+      sleeping = on
     },
   }
 }

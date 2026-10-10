@@ -8,6 +8,7 @@ import {
   LANGS,
   LINKS,
   MENU,
+  PETS,
   PROFILE,
   QUESTS,
   SECRETS,
@@ -26,9 +27,9 @@ import { pixelAccents } from './accents.ts'
 import { setMusic, sound, unlockAudio } from './audio.ts'
 import { Typewriter } from './dialog.ts'
 import { toast, wipe } from './fx.ts'
-import { animateHero, icon, padSprite, spriteSrc } from './render.ts'
+import { animateCat, animateHero, icon, padSprite, spriteSrc } from './render.ts'
 import { Scene } from './scene.ts'
-import { NIA, PALETTE, PORTRAIT, RABBIT, type IconName, type Sprite } from './sprites.ts'
+import { LILI, NIA, PALETTE, PORTRAIT, RABBIT, TODINHO, type CatName, type IconName, type Sprite } from './sprites.ts'
 import { discover, persist, resetSave, save, visit, type Settings, type TextSpeed } from './store.ts'
 
 type Route = 'title' | 'menu' | Section | 'secrets' | 'options'
@@ -50,6 +51,7 @@ const cursor = () => icon('cursor', 3, 'cmd__cursor')
 let route: Route = 'title'
 let cleanup: (() => void)[] = []
 let hero: ReturnType<typeof animateHero> | null = null
+let cats: ReturnType<typeof animateCat>[] = []
 let lastMenuIndex = 0
 let pendingIntro = false
 let dialogMode = false
@@ -267,6 +269,7 @@ function render(next: Route) {
   cleanup = []
   nav.stack = []
   hero = null
+  cats = []
   hubTalk = null
   asleep = false
   dialogMode = false
@@ -450,6 +453,37 @@ function bindPoke(canvas: HTMLCanvasElement) {
   })
 }
 
+// A Lili e o Todinho: carinho faz miar e falar; carinho nos dois é um segredo.
+const CAT_FACE: Record<CatName, Sprite> = {
+  lili: padSprite(LILI, PORTRAIT[0].length, PORTRAIT.length),
+  todinho: padSprite(TODINHO, PORTRAIT[0].length, PORTRAIT.length),
+}
+const petted = new Set<CatName>()
+const pets: Record<CatName, number> = { lili: 0, todinho: 0 }
+
+/** Anima e liga o carinho em todo canvas[data-cat] dentro de `root`. */
+function mountCats(root: ParentNode, scale: number) {
+  root.querySelectorAll<HTMLCanvasElement>('canvas[data-cat]').forEach((canvas) => {
+    const name = canvas.dataset.cat as CatName
+    const cat = animateCat(canvas, name, scale)
+    cats.push(cat)
+    cleanup.push(cat.stop)
+    canvas.classList.add('pokeable')
+    canvas.addEventListener('click', (e) => {
+      e.stopPropagation()
+      if (dialogMode) return
+      sound.meow(name === 'lili' ? 1.15 : 0.9)
+      canvas.classList.remove('hop')
+      void canvas.offsetWidth
+      canvas.classList.add('hop')
+      const lines = PETS[name].lines
+      say(PETS[name].name, lines[pets[name]++ % lines.length], CAT_FACE[name])
+      petted.add(name)
+      if (petted.size === 2) found('pets')
+    })
+  })
+}
+
 // Cochilo: um minuto parado no menu.
 let asleep = false
 let idleTimer: number | undefined
@@ -462,6 +496,7 @@ function fallAsleep() {
   if (route !== 'menu' || dialogMode || !hero) return
   asleep = true
   hero.sleep(true)
+  cats.forEach((c) => c.sleep(true))
   app.querySelector('.stage')?.classList.add('is-sleeping')
   say('LUCAS', EGGS.sleep)
   found('sleep')
@@ -469,6 +504,7 @@ function fallAsleep() {
 function wake() {
   asleep = false
   hero?.sleep(false)
+  cats.forEach((c) => c.sleep(false))
   hero?.happy(1200)
   app.querySelector('.stage')?.classList.remove('is-sleeping')
   if (route === 'menu') say('LUCAS', EGGS.wake)
@@ -627,12 +663,13 @@ function renderTitle() {
         ).join('')}
       </div>
       <p class="title__hint">${touch ? UI.startTouch : UI.startKeys}</p>
-      <div class="title__hero"><canvas aria-hidden="true"></canvas></div>
+      <div class="title__hero"><canvas data-cat="lili" aria-hidden="true"></canvas><canvas class="title__lucas" aria-hidden="true"></canvas><canvas data-cat="todinho" aria-hidden="true"></canvas></div>
       <p class="title__foot">${UI.footer}</p>
     </section>`
-  hero = animateHero(app.querySelector('.title__hero canvas')!, touch ? 4 : 5)
+  hero = animateHero(app.querySelector('.title__lucas')!, touch ? 4 : 5)
   cleanup.push(hero.stop)
-  bindPoke(app.querySelector('.title__hero canvas')!)
+  bindPoke(app.querySelector('.title__lucas')!)
+  mountCats(app.querySelector('.title__hero')!, touch ? 2 : 3)
   const buttons = [...app.querySelectorAll<HTMLButtonElement>('.title__menu .cmd')]
   for (const b of buttons) {
     b.addEventListener('click', () => {
@@ -679,7 +716,7 @@ function renderMenu() {
   app.innerHTML = `
     <section class="hub">
       <div class="hub__hero">
-        <div class="stage"><canvas class="stage__hero" aria-hidden="true"></canvas><span class="stage__shadow"></span></div>
+        <div class="stage"><div class="stage__row"><canvas data-cat="lili" aria-hidden="true"></canvas><canvas class="stage__hero" aria-hidden="true"></canvas><canvas data-cat="todinho" aria-hidden="true"></canvas></div><span class="stage__shadow"></span></div>
         <div class="win plate">
           <p class="plate__name">LUCAS BOROTO</p>
           <p class="plate__meta">${UI.level} ${PROFILE.level} · ${PROFILE.className}</p>
@@ -714,6 +751,7 @@ function renderMenu() {
   const skip = app.querySelector<HTMLButtonElement>('.dialog__skip')!
   const who = app.querySelector<HTMLElement>('.dialog__who')!
   bindPoke(app.querySelector('.stage__hero')!)
+  mountCats(app.querySelector('.stage')!, wide() ? 4 : 2)
   hubTalk = (name, text, portrait) => {
     who.textContent = name
     if (portrait) face.show(portrait, 7000)
@@ -840,6 +878,12 @@ function renderStatus() {
         <ul class="equip">
           ${PROFILE.equipment.map((e) => `<li>${icon(e.icon, 2)}<span>${e.slot}</span><b>${esc(e.item)}</b></li>`).join('')}
         </ul>
+        <h2 class="sub">${UI.party}</h2>
+        <ul class="party">
+          ${(['lili', 'todinho'] as CatName[])
+            .map((c) => `<li><canvas data-cat="${c}" aria-hidden="true"></canvas><span><b>${PETS[c].name}</b><small>${esc(PETS[c].kind)}</small></span></li>`)
+            .join('')}
+        </ul>
       </div>
       <div class="win status__bio">
         <h2 class="sub">${UI.about}</h2>
@@ -850,6 +894,7 @@ function renderStatus() {
   hero = animateHero(app.querySelector('.status__hero canvas')!, wide() ? 6 : 4)
   cleanup.push(hero.stop)
   bindPoke(app.querySelector('.status__hero canvas')!)
+  mountCats(app.querySelector('.party')!, 2)
   nav.set([])
 }
 
