@@ -567,7 +567,8 @@ let cityClicks = 0
 let moonTimer: number | undefined
 let cityTimer: number | undefined
 document.addEventListener('click', (e) => {
-  if (!onBackground(e.target)) return
+  // Durante a introdução, os cliques são para avançar o diálogo, não para segredos.
+  if (dialogMode || !onBackground(e.target)) return
   if (scene.hitMoon(e.clientX, e.clientY)) {
     moonClicks++
     sound.poke()
@@ -581,7 +582,7 @@ document.addEventListener('click', (e) => {
     found('rabbit')
     return
   }
-  if (e.clientY < window.innerHeight * 0.72) return
+  if (!scene.hitCity(e.clientX, e.clientY)) return
   cityClicks++
   window.clearTimeout(cityTimer)
   cityTimer = window.setTimeout(() => (cityClicks = 0), 2000)

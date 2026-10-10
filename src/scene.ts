@@ -240,6 +240,16 @@ export class Scene {
 
   /** Fogos de artifício por alguns segundos (conquistas). */
   /** O ponto da tela (em px do navegador) está sobre a lua? */
+  /** O ponto da tela está sobre um prédio ou casa (contando o parallax)? */
+  hitCity(clientX: number, clientY: number): boolean {
+    const k = window.innerWidth / this.w
+    const x = Math.floor(clientX / k)
+    const y = Math.floor(clientY / k)
+    const shift = reducedMotion() ? 0 : this.mx - 0.5
+    const alpha = (l: { ctx: CanvasRenderingContext2D }, px: number) => l.ctx.getImageData(Math.round(x + MARGIN + shift * px), y, 1, 1).data[3]
+    return alpha(this.near, 9) > 0 || alpha(this.far, 4) > 0
+  }
+
   hitMoon(clientX: number, clientY: number): boolean {
     const k = window.innerWidth / this.w
     return Math.hypot(clientX / k - this.moon.x, clientY / k - this.moon.y) <= this.moon.r + 3
