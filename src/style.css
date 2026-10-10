@@ -1570,3 +1570,88 @@ body.crt-off .crt {
 body.over-moon #app {
   cursor: pointer;
 }
+
+/* ------------------------------------------------------------ segredos (tela) */
+
+.secrets {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 18px 22px;
+}
+
+.secrets__lead {
+  margin: 0 0 12px;
+  font: 20px/1.45 var(--body);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.secrets__lead b {
+  font-weight: normal;
+  color: var(--gold);
+}
+
+.secrets__list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.secret {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 10px 9px 48px;
+  outline: none;
+}
+
+.secret .cmd__cursor {
+  width: 30px;
+  height: auto;
+}
+
+.secret.is-active {
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0) 90%);
+}
+
+.secret.is-active .cmd__cursor {
+  opacity: 1;
+  animation: point 0.7s steps(1) infinite;
+}
+
+.secret__body {
+  display: grid;
+  gap: 4px;
+}
+
+.secret__name {
+  font: 11px/1.4 var(--display);
+  color: var(--dim);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.secret.is-found .secret__name {
+  color: var(--gold);
+}
+
+.secret__hint {
+  font: 18px/1.35 var(--body);
+  color: var(--muted);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.secret.is-found .secret__hint {
+  color: var(--text);
+}
+
+.secrets__note {
+  margin: 14px 0 0;
+  font: 15px var(--body);
+  color: var(--dim);
+}
+
+@media (max-width: 420px) {
+  .hud__label {
+    display: none;
+  }
+}

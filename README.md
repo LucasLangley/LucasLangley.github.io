@@ -15,7 +15,9 @@ Meu portfólio em forma de menu de JRPG, em pixel art e 8 bits. Feito do zero co
 | Voltar | Esc, X ou Backspace | botão ◀ |
 | Som | M | ♪ no topo |
 
-Cada seção aberta vale uma ★. Junte as 5. E existe um código secreto clássico.
+Cada seção aberta vale uma ★. Junte as 5.
+
+E há 7 segredos escondidos, com pistas diferentes no computador e no celular (lá, o que pede teclado vira gesto). A tela **SEGREDOS** mostra quantos você já achou.
 
 ## O que tem aqui
 
@@ -23,6 +25,7 @@ Cada seção aberta vale uma ★. Junte as 5. E existe um código secreto cláss
 - **Cenário em canvas** de baixa resolução ([`src/scene.ts`](src/scene.ts)): céu pontilhado, lua, estrelas, cidade com janelas que acendem, estrelas cadentes e fogos. A cidade muda a cada visita.
 - **Sons e música 8-bit gerados no navegador** com WebAudio ([`src/audio.ts`](src/audio.ts)), sem nenhum arquivo de áudio.
 - **Transição em blocos**, caixa de diálogo letra por letra e conquistas.
+- **Acentos desenhados em pixel** ([`src/accents.ts`](src/accents.ts)): a Press Start 2P encolhe maiúscula acentuada; aqui a letra fica cheia e o acento vai por cima.
 - **Rotas por hash** (`#/status`, `#/quests`…), então dá para mandar o link de uma seção direto.
 - Respeita `prefers-reduced-motion` e funciona com leitor de tela, teclado, mouse e toque.
 

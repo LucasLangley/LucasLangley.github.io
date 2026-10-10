@@ -134,7 +134,7 @@ export class Scene {
       s.fillStyle = SKY[i - 1]
       for (let x = 0; x < w; x += 2) s.fillRect(x + 1, y0, 1, 1)
     }
-    this.moon = { x: Math.round(w * 0.8), y: Math.round(h * 0.2), r: Math.max(6, Math.round(Math.min(w, h) * 0.06)) }
+    this.moon = { x: Math.round(w * 0.14), y: Math.round(h * 0.18), r: Math.max(6, Math.round(Math.min(w, h) * 0.06)) }
     this.drawMoon(s, this.moon.x, this.moon.y, this.moon.r)
 
     this.stars = []

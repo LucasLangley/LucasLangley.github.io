@@ -1,5 +1,5 @@
 // "Save" do visitante no localStorage. Tudo tolera storage bloqueado (aba anônima, cookies desligados).
-import type { Section } from './data.ts'
+import type { SecretId, Section } from './data.ts'
 
 export type TextSpeed = 'lenta' | 'normal' | 'rápida'
 
@@ -13,6 +13,7 @@ export type Settings = {
 
 type Save = {
   visited: Section[]
+  secrets: SecretId[]
   playMs: number
   introSeen: boolean
   secret: boolean
@@ -23,6 +24,7 @@ const KEY = 'lucas-boroto-portfolio:v1'
 
 const DEFAULTS: Save = {
   visited: [],
+  secrets: [],
   playMs: 0,
   introSeen: false,
   secret: false,
@@ -65,4 +67,12 @@ export function resetSave() {
   const settings = save.settings
   Object.assign(save, structuredClone(DEFAULTS), { settings })
   persist()
+}
+
+/** Marca um segredo como achado. Devolve true se for a primeira vez. */
+export function discover(id: SecretId): boolean {
+  if (save.secrets.includes(id)) return false
+  save.secrets.push(id)
+  persist()
+  return true
 }

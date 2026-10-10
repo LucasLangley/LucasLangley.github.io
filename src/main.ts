@@ -1,16 +1,17 @@
 import './fonts.css'
 import './style.css'
-import { EGGS, INTRO, JOURNEY, LINKS, MENU, PROFILE, QUESTS, SECTIONS, SKILLS, type Quest, type Section } from './data.ts'
+import { EGGS, INTRO, JOURNEY, LINKS, MENU, PROFILE, QUESTS, SECRETS, SECTIONS, SKILLS, type Quest, type SecretId, type Section } from './data.ts'
+import { pixelAccents } from './accents.ts'
 import { setMusic, sound, unlockAudio } from './audio.ts'
 import { Typewriter } from './dialog.ts'
 import { toast, wipe } from './fx.ts'
 import { animateHero, icon, padSprite, spriteSrc } from './render.ts'
 import { Scene } from './scene.ts'
 import { NIA, PALETTE, PORTRAIT, RABBIT, type IconName, type Sprite } from './sprites.ts'
-import { persist, resetSave, save, visit, type Settings, type TextSpeed } from './store.ts'
+import { discover, persist, resetSave, save, visit, type Settings, type TextSpeed } from './store.ts'
 
-type Route = 'title' | 'menu' | Section | 'options'
-const ROUTES: Route[] = ['title', 'menu', 'status', 'skills', 'quests', 'journey', 'contact', 'options']
+type Route = 'title' | 'menu' | Section | 'secrets' | 'options'
+const ROUTES: Route[] = ['title', 'menu', 'status', 'skills', 'quests', 'journey', 'contact', 'secrets', 'options']
 
 const app = document.getElementById('app')!
 const hud = document.getElementById('hud')!
@@ -274,6 +275,9 @@ function render(next: Route) {
     case 'contact':
       renderContact()
       break
+    case 'secrets':
+      renderSecrets()
+      break
     case 'options':
       renderOptions()
       break
@@ -287,6 +291,7 @@ function renderHud() {
   hud.innerHTML = `
     <div class="win hud">
       <span class="hud__stars" aria-label="Estrelas">${icon('star', 2)}<b data-stars>0</b>/${SECTIONS.length}</span>
+      <span class="hud__stars" aria-label="Segredos">${icon('chest', 2)}<b data-secrets>0</b>/${MY_SECRETS.length}</span>
       <span class="hud__time"><span class="hud__label">TEMPO</span> <b data-time>00:00:00</b></span>
       <button class="hud__sound" data-sound type="button"></button>
     </div>`
@@ -304,6 +309,7 @@ function updateHud() {
   const t = [s / 3600, (s % 3600) / 60, s % 60].map((n) => String(Math.floor(n)).padStart(2, '0')).join(':')
   hud.querySelector('[data-time]')!.textContent = t
   hud.querySelector('[data-stars]')!.textContent = String(save.visited.length)
+  hud.querySelector('[data-secrets]')!.textContent = String(foundCount())
   const btn = hud.querySelector<HTMLButtonElement>('[data-sound]')!
   btn.textContent = save.settings.sfx ? '♪ SOM' : '♪ MUDO'
   btn.setAttribute('aria-pressed', String(save.settings.sfx))
@@ -349,9 +355,37 @@ function secret() {
   scene.celebrate(12)
   hero?.happy(3000)
   toast(`${icon('spark', 3)}<span>CÓDIGO SECRETO ATIVADO!</span>`, 'star')
+  found('konami')
 }
 
 // ---------------------------------------------------------------- segredos
+
+/** Os segredos deste aparelho: no celular, os de teclado viram gestos e o do console vira girar a tela. */
+const DEVICE = touch ? 'touch' : 'pc'
+const MY_SECRETS = SECRETS.filter((s) => !s.only || s.only === DEVICE)
+const foundCount = () => MY_SECRETS.filter((s) => save.secrets.includes(s.id)).length
+
+/** Registra um segredo achado: aviso, contador no HUD e festa quando acha todos. */
+function found(id: SecretId) {
+  if (!MY_SECRETS.some((s) => s.id === id) || !discover(id)) return
+  updateHud()
+  const n = foundCount()
+  const total = MY_SECRETS.length
+  const name = MY_SECRETS.find((s) => s.id === id)!.name
+  window.setTimeout(() => {
+    sound.star()
+    toast(`${icon('chestOpen', 3)}<span>SEGREDO: ${esc(name)}</span><b>${n}/${total}</b>`, 'star')
+    if (n === total) {
+      window.setTimeout(() => {
+        sound.fanfare()
+        scene.celebrate(14)
+        hero?.happy(3000)
+        toast(`${icon('chestOpen', 3)}<span>${total}/${total} SEGREDOS! NADA ESCAPA DE VOCÊ.</span>`, 'star')
+      }, 1500)
+    }
+    if (route === 'secrets') renderSecrets(nav.index)
+  }, 1100)
+}
 
 /** Fala de um personagem: na caixa de diálogo do menu ou num aviso com retrato. */
 function say(who: string, text: string, portrait?: Sprite) {
@@ -379,6 +413,7 @@ function bindPoke(canvas: HTMLCanvasElement) {
     canvas.classList.add('hop')
     const line = EGGS.poke[pokes]
     if (line) say('LUCAS', line)
+    if (pokes === 3) found('poke')
     if (pokes === 10) {
       scene.celebrate(3)
       toast(`${icon('heart', 3)}<span>CUTUCADOR PROFISSIONAL</span>`, 'star')
@@ -400,6 +435,7 @@ function fallAsleep() {
   hero.sleep(true)
   app.querySelector('.stage')?.classList.add('is-sleeping')
   say('LUCAS', EGGS.sleep)
+  found('sleep')
 }
 function wake() {
   asleep = false
@@ -411,18 +447,19 @@ function wake() {
 for (const ev of ['keydown', 'pointerdown', 'pointermove', 'wheel']) document.addEventListener(ev, resetIdle, { passive: true })
 resetIdle()
 
-// Palavras digitadas em qualquer tela.
-const WORDS: Record<string, () => void> = {
-  casamy: () => {
-    scene.lightUp()
-    sound.sparkle()
-    say('NIA', EGGS.casamy, NIA)
-  },
-  nia: () => {
-    sound.sparkle()
-    say('NIA', EGGS.nia, NIA)
-  },
+// Nia e a cidade acesa: digitando no PC, com gestos no celular.
+function niaEgg() {
+  sound.sparkle()
+  say('NIA', EGGS.nia, NIA)
+  found('nia')
 }
+function casamyEgg() {
+  scene.lightUp()
+  sound.sparkle()
+  say('NIA', EGGS.casamy, NIA)
+  found('casamy')
+}
+const WORDS: Record<string, () => void> = { casamy: casamyEgg, nia: niaEgg }
 let typed = ''
 /** Devolve true se a tecla faz parte de uma palavra secreta (e não deve virar atalho). */
 function secretWord(key: string): boolean {
@@ -441,28 +478,83 @@ function secretWord(key: string): boolean {
   })
 }
 
-// A lua: três cliques chamam o coelho.
+/** Segurar o retrato do Lucas na caixa de diálogo chama a Nia (o jeito de celular). */
+function bindLongPress(el: HTMLElement) {
+  let timer: number | undefined
+  const cancel = () => window.clearTimeout(timer)
+  el.addEventListener('pointerdown', () => {
+    cancel()
+    timer = window.setTimeout(niaEgg, 1200)
+  })
+  for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) el.addEventListener(ev, cancel)
+  el.addEventListener('contextmenu', (e) => e.preventDefault())
+}
+
+// Cliques no fundo: três na lua chamam o coelho; cinco na cidade acendem as casas.
 const RABBIT_FACE = padSprite(RABBIT[0], PORTRAIT[0].length, PORTRAIT.length)
 const onBackground = (t: EventTarget | null) => !(t as HTMLElement | null)?.closest('.win, button, a, .cmd, canvas.px')
 let moonClicks = 0
+let cityClicks = 0
 let moonTimer: number | undefined
+let cityTimer: number | undefined
 document.addEventListener('click', (e) => {
-  if (!onBackground(e.target) || !scene.hitMoon(e.clientX, e.clientY)) return
-  moonClicks++
-  sound.poke()
-  window.clearTimeout(moonTimer)
-  moonTimer = window.setTimeout(() => (moonClicks = 0), 1500)
-  if (moonClicks < 3) return
-  moonClicks = 0
-  scene.rabbit()
-  sound.mochi()
-  say(EGGS.rabbitWho, EGGS.rabbit, RABBIT_FACE)
+  if (!onBackground(e.target)) return
+  if (scene.hitMoon(e.clientX, e.clientY)) {
+    moonClicks++
+    sound.poke()
+    window.clearTimeout(moonTimer)
+    moonTimer = window.setTimeout(() => (moonClicks = 0), 1500)
+    if (moonClicks < 3) return
+    moonClicks = 0
+    scene.rabbit()
+    sound.mochi()
+    say(EGGS.rabbitWho, EGGS.rabbit, RABBIT_FACE)
+    found('rabbit')
+    return
+  }
+  if (e.clientY < window.innerHeight * 0.72) return
+  cityClicks++
+  window.clearTimeout(cityTimer)
+  cityTimer = window.setTimeout(() => (cityClicks = 0), 2000)
+  if (cityClicks < 5) return
+  cityClicks = 0
+  casamyEgg()
 })
 document.addEventListener('pointermove', (e) => {
   document.body.classList.toggle('over-moon', onBackground(e.target) && scene.hitMoon(e.clientX, e.clientY))
 })
 
-// Recado para quem abrir o DevTools: o retrato em pixels coloridos.
+// Código clássico no celular: deslizar ↑↑↓↓←→←→.
+const SWIPES = KONAMI.slice(0, 8)
+let swipe = 0
+let start: { x: number; y: number } | null = null
+document.addEventListener('pointerdown', (e) => {
+  if (e.pointerType === 'touch') start = { x: e.clientX, y: e.clientY }
+})
+document.addEventListener('pointerup', (e) => {
+  if (e.pointerType !== 'touch' || !start) return
+  const dx = e.clientX - start.x
+  const dy = e.clientY - start.y
+  start = null
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 40) return
+  const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'ArrowRight' : 'ArrowLeft') : dy > 0 ? 'ArrowDown' : 'ArrowUp'
+  swipe = dir === SWIPES[swipe] ? swipe + 1 : dir === SWIPES[0] ? 1 : 0
+  if (swipe === SWIPES.length) {
+    swipe = 0
+    secret()
+  }
+})
+
+// Virar o celular de lado.
+if (touch) {
+  window.matchMedia('(orientation: landscape)').addEventListener('change', (e) => {
+    if (!e.matches) return
+    say('LUCAS', EGGS.rotate)
+    found('rotate')
+  })
+}
+
+// Recado para quem abrir o DevTools: o retrato em pixels coloridos e um comando para responder.
 function consoleHello() {
   let fmt = ''
   const styles: string[] = []
@@ -476,9 +568,16 @@ function consoleHello() {
   console.log(fmt, ...styles)
   console.log('%cEi, dev curioso!', 'font: bold 16px monospace; color: #ffd23f')
   console.log(
-    '%cO código deste portfólio: https://github.com/LucasLangley/LucasLangley.github.io\nDicas: ↑↑↓↓←→←→BA · digite "nia" · a lua guarda um segredo.',
+    '%cO código deste portfólio: https://github.com/LucasLangley/LucasLangley.github.io\nDigite lucas.oi() aqui para destravar um segredo.',
     'font: 12px monospace; color: #aab2dc',
   )
+  ;(window as unknown as { lucas: { oi: () => string } }).lucas = {
+    oi: () => {
+      found('console')
+      say('LUCAS', EGGS.console)
+      return EGGS.console
+    },
+  }
 }
 consoleHello()
 
@@ -553,7 +652,7 @@ function renderMenu() {
           <button class="cmd" type="button" data-route="${m.route}">
             ${cursor()}<span class="cmd__icon">${icon(m.icon, 3)}</span>
             <span class="cmd__label">${m.label}<small lang="ja">${m.jp}</small></span>
-            ${m.route === 'options' ? '' : `<span class="cmd__star ${save.visited.includes(m.route) ? 'is-on' : ''}" aria-label="${save.visited.includes(m.route) ? 'visitado' : 'não visitado'}">★</span>`}
+            ${(SECTIONS as string[]).includes(m.route) ? `<span class="cmd__star ${save.visited.includes(m.route as Section) ? 'is-on' : ''}" aria-label="${save.visited.includes(m.route as Section) ? 'visitado' : 'não visitado'}">★</span>` : ''}
           </button>`,
         ).join('')}
       </nav>
@@ -562,6 +661,7 @@ function renderMenu() {
 
   hero = animateHero(app.querySelector('.stage__hero')!, wide() ? 7 : 4)
   const face = animateHero(app.querySelector('.dialog__face canvas')!, 3, 'portrait')
+  bindLongPress(app.querySelector('.dialog__face')!)
   cleanup.push(hero.stop, face.stop)
 
   const menu = app.querySelector<HTMLElement>('.menu')!
@@ -608,7 +708,7 @@ function renderMenu() {
   dialogMode = true
   menu.inert = true
   skip.hidden = false
-  const lines = touch ? INTRO.touch : INTRO.keyboard
+  const lines = (touch ? INTRO.touch : INTRO.keyboard).map((l) => l.replace('{n}', String(MY_SECRETS.length)))
   let line = 0
   const say = async () => {
     more.hidden = true
@@ -847,6 +947,35 @@ function renderContact() {
   nav.set(links)
 }
 
+function renderSecrets(start = 0) {
+  const n = foundCount()
+  const total = MY_SECRETS.length
+  screen(
+    'secrets',
+    'chest',
+    `
+    <div class="win secrets">
+      <p class="secrets__lead">Este portfólio esconde <b>${total} segredos</b>. Você achou <b>${n}</b>.${n === total ? ' Nada escapa de você!' : ''}</p>
+      <div class="bar bar--exp"><i style="--v:${Math.round((n / total) * 100)}%"></i></div>
+      <ul class="secrets__list" role="list">
+        ${MY_SECRETS.map((s) => {
+          const ok = save.secrets.includes(s.id)
+          return `
+          <li class="secret ${ok ? 'is-found' : ''}" tabindex="-1">
+            ${cursor()}${icon(ok ? 'chestOpen' : 'chest', 3)}
+            <span class="secret__body">
+              <span class="secret__name">${ok ? esc(s.name) : '???'}</span>
+              <span class="secret__hint">${esc(ok ? s.found : s[DEVICE])}</span>
+            </span>
+          </li>`
+        }).join('')}
+      </ul>
+      <p class="secrets__note">${touch ? 'Pistas para celular. No computador, alguns segredos são diferentes.' : 'Pistas para computador. No celular, alguns segredos são diferentes.'}</p>
+    </div>`,
+  )
+  nav.set([...app.querySelectorAll<HTMLElement>('.secret')], { start })
+}
+
 type Option = {
   key: keyof Settings
   label: string
@@ -941,6 +1070,7 @@ function renderOptions(start = 0) {
 // ---------------------------------------------------------------- início
 
 applySettings()
+pixelAccents()
 renderHud()
 render(parse())
 requestAnimationFrame(() => document.body.classList.add('is-ready'))

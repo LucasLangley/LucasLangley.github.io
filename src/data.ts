@@ -229,30 +229,34 @@ export const LINKS: ContactLink[] = [
 ]
 
 export type Section = 'status' | 'skills' | 'quests' | 'journey' | 'contact'
-export type MenuEntry = { route: Section | 'options'; label: string; jp: string; icon: IconName; hint: string }
+export type MenuEntry = { route: Section | 'secrets' | 'options'; label: string; jp: string; icon: IconName; hint: string }
 
 export const MENU: MenuEntry[] = [
   { route: 'status', label: 'STATUS', jp: 'ステータス', icon: 'heart', hint: 'Quem eu sou, em poucas linhas.' },
   { route: 'skills', label: 'HABILIDADES', jp: 'スキル', icon: 'spark', hint: 'O que eu sei usar, e onde já usei.' },
-  { route: 'quests', label: 'PROJETOS', jp: 'クエスト', icon: 'scroll', hint: 'Missões concluídas e em andamento.' },
+  { route: 'quests', label: 'MISSÕES', jp: 'クエスト', icon: 'scroll', hint: 'Projetos concluídos e em andamento.' },
   { route: 'journey', label: 'JORNADA', jp: 'ぼうけんのきろく', icon: 'star', hint: 'Trabalho, estudos e certificações.' },
   { route: 'contact', label: 'CONTATO', jp: 'れんらく', icon: 'letter', hint: 'Me chame para conversar.' },
-  { route: 'options', label: 'CONFIG', jp: 'せってい', icon: 'gear', hint: 'Som, música, efeito CRT e velocidade do texto.' },
+  { route: 'secrets', label: 'SEGREDOS', jp: 'ひみつ', icon: 'chest', hint: 'Este portfólio esconde segredos. Quantos você já achou?' },
+  { route: 'options', label: 'OPÇÕES', jp: 'せってい', icon: 'gear', hint: 'Som, música, efeito CRT e velocidade do texto.' },
 ]
 
 export const SECTIONS: Section[] = ['status', 'skills', 'quests', 'journey', 'contact']
 
+// {n} vira o número de segredos do aparelho.
 export const INTRO = {
   keyboard: [
     'Ah, um visitante! Bem-vindo ao meu portfólio.',
     'Eu sou o Lucas: programador em Taubaté e fundador solo do Casamy.',
     'Cada seção que você abrir vale uma ★. Junte as 5!',
+    'E tem {n} segredos escondidos por aqui. Consegue achar todos?',
     'Setas para escolher, Enter para abrir, Esc para voltar. Boa aventura!',
   ],
   touch: [
     'Ah, um visitante! Bem-vindo ao meu portfólio.',
     'Eu sou o Lucas: programador em Taubaté e fundador solo do Casamy.',
     'Cada seção que você abrir vale uma ★. Junte as 5!',
+    'E tem {n} segredos escondidos por aqui. Consegue achar todos?',
     'Toque numa opção para abrir. Boa aventura!',
   ],
   back: 'Bem-vindo de volta! Continue de onde parou.',
@@ -272,4 +276,75 @@ export const EGGS = {
   casamy: 'Todas as casas da cidade acenderam! A sua começa em casamy.com.br.',
   rabbitWho: 'うさぎ',
   rabbit: 'ぺったん、ぺったん！ Diz a lenda japonesa que um coelho mora na lua socando mochi. Olha ele aí.',
+  rotate: 'Opa, o mundo virou!',
+  console: 'Oi! Você achou o recado. Valeu por fuçar o código.',
 }
+
+export type SecretId = 'poke' | 'sleep' | 'rabbit' | 'nia' | 'casamy' | 'konami' | 'console' | 'rotate'
+
+/**
+ * Cada aparelho tem 7 segredos. Os que dependem de teclado ganham um jeito de tocar no celular,
+ * e o do console (só no PC) troca de lugar com o de virar o celular (só no celular).
+ */
+export type Secret = { id: SecretId; name: string; found: string; pc: string; touch: string; only?: 'pc' | 'touch' }
+
+export const SECRETS: Secret[] = [
+  {
+    id: 'poke',
+    name: 'CÓCEGAS',
+    pc: 'O Lucas não gosta de ser cutucado.',
+    touch: 'O Lucas não gosta de ser cutucado.',
+    found: 'Você cutucou o Lucas até ele reclamar.',
+  },
+  {
+    id: 'sleep',
+    name: 'COCHILO',
+    pc: 'Às vezes, é só esperar no menu.',
+    touch: 'Às vezes, é só esperar no menu.',
+    found: 'O Lucas dormiu esperando você.',
+  },
+  {
+    id: 'rabbit',
+    name: 'COELHO DA LUA',
+    pc: 'Olhe para o céu e clique três vezes.',
+    touch: 'Olhe para o céu e toque três vezes.',
+    found: 'O coelho da lua socando mochi.',
+  },
+  {
+    id: 'nia',
+    name: 'NIA',
+    pc: 'Escreva o nome da assistente do Casamy.',
+    touch: 'Segure o rosto do Lucas na caixa de diálogo.',
+    found: 'A Nia apareceu para dar oi.',
+  },
+  {
+    id: 'casamy',
+    name: 'CIDADE ACESA',
+    pc: 'Escreva o nome do app.',
+    touch: 'A cidade está dormindo. Acorde-a com cinco toques.',
+    found: 'Todas as casas da cidade acenderam.',
+  },
+  {
+    id: 'konami',
+    name: 'CÓDIGO CLÁSSICO',
+    pc: 'Um código que todo gamer conhece.',
+    touch: 'Um código que todo gamer conhece, deslizando o dedo.',
+    found: 'Fogos no céu.',
+  },
+  {
+    id: 'console',
+    name: 'RECADO PARA DEVS',
+    pc: 'Devs curiosos olham por trás da tela.',
+    touch: '',
+    found: 'Você respondeu ao recado no console.',
+    only: 'pc',
+  },
+  {
+    id: 'rotate',
+    name: 'MUNDO DE LADO',
+    pc: '',
+    touch: 'Nem todo jogo se joga em pé.',
+    found: 'Você virou o celular.',
+    only: 'touch',
+  },
+]
