@@ -27,7 +27,7 @@ E há 8 segredos escondidos, com pistas diferentes no computador e no celular (l
 - **Sons e música 8-bit gerados no navegador** com WebAudio ([`src/audio.ts`](src/audio.ts)), sem nenhum arquivo de áudio.
 - **Transição em blocos**, caixa de diálogo letra por letra e conquistas.
 - **Acentos desenhados em pixel** ([`src/accents.ts`](src/accents.ts)): a Press Start 2P encolhe maiúscula acentuada; aqui a letra fica cheia e o acento vai por cima.
-- **Rotas por hash** (`#/status`, `#/quests`…), então dá para mandar o link de uma seção direto.
+- **Endereços limpos** (`/status`, `/quests`…): dá para mandar o link de uma seção direto. O build gera uma página por tela, que o GitHub Pages serve sem `.html`; links antigos com `#/` continuam valendo.
 - Respeita `prefers-reduced-motion` e funciona com leitor de tela, teclado, mouse e toque.
 
 ## Mudar o conteúdo

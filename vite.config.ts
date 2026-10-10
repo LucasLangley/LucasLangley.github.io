@@ -1,3 +1,5 @@
+import { copyFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
 
 // LinkedIn e X só mostram a imagem de prévia com URL absoluta. No deploy, o workflow passa SITE_URL.
@@ -13,8 +15,24 @@ const absoluteShareImage = (): Plugin => ({
       : html,
 })
 
-// Caminho relativo: o mesmo build funciona em usuario.github.io/qualquer-repo/
+// Endereços limpos (/menu, /status…) no GitHub Pages: ele serve /menu a partir de menu.html.
+// Cada tela ganha uma cópia da página; o site lê o endereço e abre a tela certa.
+// Mantenha esta lista igual a ROUTES em src/main.ts.
+const ROUTES = ['menu', 'status', 'skills', 'quests', 'journey', 'contact', 'secrets', 'options']
+
+const routePages = (): Plugin => ({
+  name: 'paginas-das-rotas',
+  apply: 'build',
+  writeBundle({ dir }) {
+    if (!dir) return
+    const index = join(dir, 'index.html')
+    for (const r of ROUTES) copyFileSync(index, join(dir, `${r}.html`))
+    copyFileSync(index, join(dir, '404.html'))
+  },
+})
+
 export default defineConfig({
-  base: './',
-  plugins: [absoluteShareImage()],
+  // O site fica na raiz (LucasLangley.github.io), então os caminhos são absolutos.
+  base: '/',
+  plugins: [absoluteShareImage(), routePages()],
 })

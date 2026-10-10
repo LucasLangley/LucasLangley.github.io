@@ -220,17 +220,20 @@ function firstGesture() {
 }
 document.addEventListener('pointerdown', firstGesture)
 
-// ---------------------------------------------------------------- rotas (#/menu, #/status...) e transições
+// ---------------------------------------------------------------- rotas (/menu, /status...) e transições
+
+// Links antigos no formato /#/status viram /status.
+if (location.hash.startsWith('#/')) history.replaceState(null, '', `/${location.hash.slice(2)}`)
 
 function parse(): Route {
-  const r = location.hash.replace(/^#\/?/, '')
+  const r = location.pathname.replace(/^\/|\/$/g, '').replace(/\.html$/, '')
   return (ROUTES as string[]).includes(r) ? (r as Route) : 'title'
 }
 
 function go(r: Route) {
-  const hash = r === 'title' ? '#/' : `#/${r}`
-  if (location.hash === hash) void show(r)
-  else location.hash = hash
+  const path = r === 'title' ? '/' : `/${r}`
+  if (location.pathname !== path) history.pushState(null, '', path)
+  void show(r)
 }
 
 let busy = false
@@ -252,7 +255,8 @@ async function show(next: Route) {
   queued = null
 }
 
-window.addEventListener('hashchange', () => void show(parse()))
+// Voltar e avançar do navegador.
+window.addEventListener('popstate', () => void show(parse()))
 
 function back() {
   if (nav.pop()) {
