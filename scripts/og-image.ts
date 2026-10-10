@@ -1,7 +1,7 @@
 // Gera public/og.png (1200x630, prévia de link no LinkedIn/X) e public/favicon.svg a partir dos mesmos sprites do site.
 // Tudo é desenhado numa grade de 200x105 "pixels" e ampliado 6x.
 import { mkdirSync, writeFileSync } from 'node:fs'
-import { HERO, PALETTE, PORTRAIT, hexToRGB, type Sprite } from '../src/sprites.ts'
+import { HERO, LILI, PALETTE, PORTRAIT, TODINHO, hexToRGB, type Sprite } from '../src/sprites.ts'
 import { encodePNG } from './png.ts'
 
 const W = 200
@@ -62,9 +62,11 @@ function sprite(s: Sprite, ox: number, oy: number, k = 1) {
   )
 }
 
-// Personagem com sombra no chão
-rect(16, H - 5, 40, 2, '#05050f')
-sprite(HERO, 12, H - 3 - 64, 2)
+// Lucas com a Lili (esquerda) e o Todinho (direita), sombra no chão
+rect(4, H - 5, 69, 2, '#05050f')
+sprite(HERO, 13, H - 3 - 64, 2)
+sprite(LILI, 3, H - 3 - 16)
+sprite(TODINHO, 58, H - 3 - 16)
 
 // Janela de JRPG atrás do texto
 const [wx0, wy0, wx1, wy1] = [74, 10, 197, 90]
