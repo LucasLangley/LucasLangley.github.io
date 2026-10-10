@@ -2,6 +2,8 @@
 
 Meu portfólio em forma de menu de JRPG, em pixel art e 8 bits. Feito do zero com TypeScript, canvas e CSS, sem framework.
 
+**Jogue em https://lucaslangley.github.io**
+
 ![Prévia](public/og.png)
 
 ## Como jogar

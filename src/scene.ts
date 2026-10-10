@@ -10,6 +10,7 @@ type Star = { x: number; y: number; phase: number; speed: number; big: boolean }
 type Win = { x: number; y: number; on: boolean }
 type Cloud = { x: number; y: number; w: number; speed: number }
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; color: string }
+type Petal = { x: number; y: number; vx: number; vy: number; phase: number }
 
 function rng(seed: number) {
   return () => {
@@ -39,6 +40,8 @@ export class Scene {
   private beacons: { x: number; y: number }[] = []
   private clouds: Cloud[] = []
   private particles: Particle[] = []
+  private petals: Petal[] = []
+  private sakura = true
   private pending: number[] = []
   private shooting: { x: number; y: number; life: number } | null = null
   private nextShooting = 4
@@ -82,7 +85,27 @@ export class Scene {
     this.canvas.width = this.w
     this.canvas.height = this.h
     this.build()
+    this.setSakura(this.sakura, true)
     this.draw()
+  }
+
+  /** Liga ou desliga as pétalas de sakura (recria só se mudou ou se `force`). */
+  setSakura(on: boolean, force = false) {
+    if (!force && on === this.sakura && (this.petals.length > 0) === on) return
+    this.sakura = on
+    this.petals = []
+    if (on) for (let i = 0; i < Math.round(this.w / 18); i++) this.petals.push(this.newPetal(Math.random() * this.h))
+    if (reducedMotion()) this.draw()
+  }
+
+  private newPetal(y = -3): Petal {
+    return {
+      x: Math.random() * (this.w + 60),
+      y,
+      vx: -(5 + Math.random() * 8),
+      vy: 7 + Math.random() * 7,
+      phase: Math.random() * Math.PI * 2,
+    }
   }
 
   private build() {
@@ -309,6 +332,11 @@ export class Scene {
       p.life -= dt
     }
     this.particles = this.particles.filter((p) => p.life > 0)
+    for (const p of this.petals) {
+      p.x += (p.vx + Math.sin(this.time * 1.6 + p.phase) * 7) * dt
+      p.y += p.vy * dt
+      if (p.y > this.h + 2 || p.x < -4) Object.assign(p, this.newPetal())
+    }
   }
 
   private draw() {
@@ -371,5 +399,16 @@ export class Scene {
       for (const b of this.beacons) ctx.fillRect(Math.round(b.x - MARGIN - shift * 4), b.y, 1, 1)
     }
     ctx.drawImage(this.near.canvas, Math.round(-MARGIN - shift * 9), 0)
+
+    // Pétalas na frente da cidade, em dois quadros (de lado e de frente) para parecer que giram.
+    for (const p of this.petals) {
+      const x = Math.round(p.x)
+      const y = Math.round(p.y)
+      const turning = Math.sin(time * 4 + p.phase) > 0
+      ctx.fillStyle = '#ffc4d2'
+      ctx.fillRect(x, y, turning ? 1 : 2, 1)
+      ctx.fillStyle = '#ff8fab'
+      ctx.fillRect(turning ? x : x + 1, y + 1, 1, 1)
+    }
   }
 }

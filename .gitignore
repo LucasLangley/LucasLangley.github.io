@@ -3,3 +3,4 @@ dist
 .sprite-preview
 *.log
 TASKS.md
+.claude/

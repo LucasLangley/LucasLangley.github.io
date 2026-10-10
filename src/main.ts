@@ -858,11 +858,13 @@ const OPTIONS: Option[] = [
   { key: 'sfx', label: 'EFEITOS SONOROS', values: [true, false], show: (v) => (v ? 'LIGADO' : 'DESLIGADO') },
   { key: 'music', label: 'MÚSICA', values: [false, true], show: (v) => (v ? 'LIGADA' : 'DESLIGADA') },
   { key: 'crt', label: 'EFEITO CRT', values: [true, false], show: (v) => (v ? 'LIGADO' : 'DESLIGADO') },
+  { key: 'sakura', label: 'SAKURA', values: [true, false], show: (v) => (v ? 'LIGADA' : 'DESLIGADA') },
   { key: 'textSpeed', label: 'TEXTO', values: ['lenta', 'normal', 'rápida'], show: (v) => String(v).toUpperCase() },
 ]
 
 function applySettings() {
   document.body.classList.toggle('crt-off', !save.settings.crt)
+  scene.setSakura(save.settings.sakura)
 }
 
 function renderOptions(start = 0) {

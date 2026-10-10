@@ -31,6 +31,15 @@ export const PALETTE: Record<string, string> = {
   q: '#a3966a', // coelho da lua
   e: '#7a5530', // madeira do pilão
   o: '#fffaf0', // mochi
+  // Logo do Casamy (cores tiradas do ícone oficial do app)
+  f: '#faf7f2',
+  k: '#1a1916',
+  A: '#f6b093',
+  E: '#c5d39a',
+  F: '#b3c8ec',
+  J: '#a6dcd1',
+  U: '#f0d67e',
+  T: '#f2b632',
   D: '#4a4f7a',
   C: '#ff5c8a',
   c: '#b8305e',
@@ -277,6 +286,21 @@ export const ICONS = {
     'KKKwKKKKwwKK',
     'KKwKKKKKKwwK',
     'KwKKKKKKKKwK',
+    '.KKKKKKKKKK.',
+  ],
+  casamy: [
+    '.KKKKKKKKKK.',
+    'KffffffffffK',
+    'KffffkkffffK',
+    'KfffkkkkfffK',
+    'KffkkkkkkffK',
+    'KfkkkkkkkkfK',
+    'KfAAfEEfFFfK',
+    'KfAAfEEfFFfK',
+    'KffffffffffK',
+    'KfJJfkkfUUfK',
+    'KfJJfkTfUUfK',
+    'KffffkkffffK',
     '.KKKKKKKKKK.',
   ],
   github: [

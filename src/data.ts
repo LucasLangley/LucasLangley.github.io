@@ -143,7 +143,7 @@ export const QUESTS: Quest[] = [
     name: 'Casamy',
     status: 'CONCLUÍDA',
     when: 'Lançado na App Store · out 2026',
-    icon: 'house',
+    icon: 'casamy',
     goal: 'Mostrar a quem vai montar a casa nova o que ainda falta, cômodo por cômodo e com preço, e deixar a família reservar presentes sem repetir.',
     party: 'Solo: produto, código, design e lançamento',
     loot: [
@@ -209,7 +209,7 @@ export const QUESTS: Quest[] = [
 export type JourneyEntry = { when: string; title: string; place: string; icon: IconName; badge?: string }
 
 export const JOURNEY: JourneyEntry[] = [
-  { when: 'OUT 2026', title: 'Lança o Casamy na App Store', place: 'Fundador solo', icon: 'house', badge: 'NOVO!' },
+  { when: 'OUT 2026', title: 'Lança o Casamy na App Store', place: 'Fundador solo', icon: 'casamy', badge: 'NOVO!' },
   { when: 'JUN 2025', title: 'Programador Júnior', place: 'Hermanos TI · contrato · Taubaté', icon: 'phone', badge: 'ATUAL' },
   { when: 'FEV 2025', title: 'Introduction to IoT', place: 'Cisco', icon: 'shield' },
   { when: 'JUN 2024', title: 'CCNA: Introduction to Networks', place: 'Cisco · com carta de honraria', icon: 'shield' },
@@ -225,7 +225,7 @@ export const LINKS: ContactLink[] = [
   { label: 'GITHUB', handle: 'LucasLangley', href: 'https://github.com/LucasLangley', icon: 'github' },
   { label: 'X', handle: '@Borotos00', href: 'https://x.com/Borotos00', icon: 'x' },
   { label: 'INSTAGRAM', handle: '@lucas_boroto04', href: 'https://instagram.com/lucas_boroto04/', icon: 'instagram' },
-  { label: 'CASAMY', handle: 'casamy.com.br', href: 'https://casamy.com.br', icon: 'house' },
+  { label: 'CASAMY', handle: 'casamy.com.br', href: 'https://casamy.com.br', icon: 'casamy' },
 ]
 
 export type Section = 'status' | 'skills' | 'quests' | 'journey' | 'contact'

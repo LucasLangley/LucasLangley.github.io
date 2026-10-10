@@ -7,6 +7,7 @@ export type Settings = {
   sfx: boolean
   music: boolean
   crt: boolean
+  sakura: boolean
   textSpeed: TextSpeed
 }
 
@@ -25,7 +26,7 @@ const DEFAULTS: Save = {
   playMs: 0,
   introSeen: false,
   secret: false,
-  settings: { sfx: true, music: false, crt: true, textSpeed: 'normal' },
+  settings: { sfx: true, music: false, crt: true, sakura: true, textSpeed: 'normal' },
 }
 
 function read(): Save {
