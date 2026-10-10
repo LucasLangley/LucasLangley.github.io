@@ -221,7 +221,7 @@ export const JOURNEY: JourneyEntry[] = [
 export type ContactLink = { label: string; handle: string; href: string; icon: IconName }
 
 export const LINKS: ContactLink[] = [
-  { label: 'LINKEDIN', handle: 'in/lucas-boroto', href: 'https://www.linkedin.com/in/lucas-boroto/', icon: 'linkedin' },
+  { label: 'LINKEDIN', handle: 'Lucas Boroto', href: 'https://www.linkedin.com/in/lucas-boroto/', icon: 'linkedin' },
   { label: 'GITHUB', handle: 'LucasLangley', href: 'https://github.com/LucasLangley', icon: 'github' },
   { label: 'X', handle: '@Borotos00', href: 'https://x.com/Borotos00', icon: 'x' },
   { label: 'INSTAGRAM', handle: '@lucas_boroto04', href: 'https://instagram.com/lucas_boroto04/', icon: 'instagram' },
