@@ -88,6 +88,10 @@ const nav = {
       el.onfocus = () => {
         if (i !== this.index && this.items === items) this.select(i, false)
       }
+      // No iPhone tocar num botão não dá foco: o toque seleciona antes do clique.
+      el.onpointerdown = () => {
+        if (i !== this.index && this.items === items) this.select(i)
+      }
     })
     if (items.length) this.select(this.index, false)
   },
@@ -744,7 +748,7 @@ function renderMenu() {
           (m) => `
           <button class="cmd" type="button" data-route="${m.route}">
             ${cursor()}<span class="cmd__icon">${icon(m.icon, 3)}</span>
-            <span class="cmd__label">${m.label}<small lang="ja">${m.jp}</small></span>
+            <span class="cmd__label"><span>${m.label}</span><small lang="ja">${m.jp}</small></span>
             ${(SECTIONS as string[]).includes(m.route) ? `<span class="cmd__star ${save.visited.includes(m.route as Section) ? 'is-on' : ''}" aria-label="${save.visited.includes(m.route as Section) ? UI.visited : UI.notVisited}">★</span>` : ''}
           </button>`,
         ).join('')}
@@ -873,7 +877,7 @@ function renderStatus() {
           <p class="status__class">${PROFILE.className}</p>
           <p class="status__open"><span class="badge">${UI.open}</span><span>${esc(PROFILE.openTo)}</span></p>
           <dl class="kv">
-            <div><dt>${UI.level}</dt><dd>${PROFILE.level} <small>${esc(PROFILE.levelNote)}</small></dd></div>
+            <div><dt>${UI.level}</dt><dd>${PROFILE.level} <small>· ${esc(PROFILE.levelNote)}</small></dd></div>
             <div><dt>${UI.location}</dt><dd>${esc(PROFILE.location)}</dd></div>
           </dl>
           ${bar('HP', 100, 100, 'hp')}

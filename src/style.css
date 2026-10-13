@@ -1316,7 +1316,8 @@ body.crt-off .crt {
 
   .plate {
     min-width: 0;
-    flex: 1;
+    /* Sem espaço ao lado do Lucas e dos gatos, a placa desce para a linha de baixo. */
+    flex: 1 1 230px;
     max-width: 320px;
   }
 
@@ -1766,4 +1767,34 @@ body.over-moon #app {
 
 .equip {
   margin-bottom: 18px;
+}
+
+@media (max-width: 899px) {
+  /* E-mail comprido não pode passar da borda da carta. */
+  .contact .cmd {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .contact__handle {
+    min-width: 0;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 380px) {
+  /* Celular bem estreito: o título da tela fica só com o nome. */
+  .screen__title small {
+    display: none;
+  }
+
+  .screen__title {
+    font-size: 10px;
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .back {
+    padding: 8px 10px;
+  }
 }
