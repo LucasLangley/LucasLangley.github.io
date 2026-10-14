@@ -106,7 +106,7 @@ export const SECTIONS: Section[] = ['status', 'skills', 'quests', 'journey', 'co
 export type ContactLink = { label: string; handle: string; href: string; icon: IconName; copy?: boolean }
 
 export const LINKS: ContactLink[] = [
-  { label: 'E-MAIL', handle: 'lucasgrok@mail.grokbot.com', href: 'mailto:lucasgrok@mail.grokbot.com', icon: 'mail', copy: true },
+  { label: 'E-MAIL', handle: 'lucas.assistente@mail.grokbot.com', href: 'mailto:lucas.assistente@mail.grokbot.com', icon: 'mail', copy: true },
   { label: 'LINKEDIN', handle: 'Lucas Boroto', href: 'https://www.linkedin.com/in/lucas-boroto/', icon: 'linkedin' },
   { label: 'GITHUB', handle: 'LucasLangley', href: 'https://github.com/LucasLangley', icon: 'github' },
   { label: 'X', handle: '@Borotos00', href: 'https://x.com/Borotos00', icon: 'x' },
