@@ -29,7 +29,7 @@ import { Typewriter } from './dialog.ts'
 import { toast, wipe } from './fx.ts'
 import { animateCat, animateHero, icon, padSprite, spriteSrc } from './render.ts'
 import { Scene } from './scene.ts'
-import { LILI, NIA, PALETTE, PORTRAIT, RABBIT, TODINHO, type CatName, type IconName, type Sprite } from './sprites.ts'
+import { LILI, NIA, NIA_HAPPY, NIA_KEY, PALETTE, PORTRAIT, RABBIT, TODINHO, type CatName, type IconName, type Sprite } from './sprites.ts'
 import { discover, persist, resetSave, save, visit, type Settings, type TextSpeed } from './store.ts'
 
 type Route = 'title' | 'menu' | Section | 'secrets' | 'options'
@@ -529,7 +529,7 @@ function niaEgg() {
 function casamyEgg() {
   scene.lightUp()
   sound.sparkle()
-  say('NIA', EGGS.casamy, NIA)
+  say('NIA', EGGS.casamy, NIA_HAPPY)
   found('casamy')
 }
 const WORDS: Record<string, () => void> = { casamy: casamyEgg, nia: niaEgg }
@@ -950,6 +950,7 @@ function renderSkills() {
 
 function questDetail(q: Quest) {
   return `
+    ${q.id === 'casamy' ? `<div class="npc"><img class="px npc__key" src="${spriteSrc(NIA_KEY, 3)}" width="72" height="96" alt="Nia"><p class="npc__line"><b>NIA</b>${esc(UI.niaQuest)}</p></div>` : ''}
     <p class="tag">${q.kind === 'main' ? UI.questMain : UI.questSide}</p>
     <h2 class="detail__name">${icon(q.icon, 3)}<span>${esc(q.name)}</span></h2>
     <p class="detail__status"><span class="badge ${q.status === 'done' ? 'badge--done' : 'badge--wip'}">${q.status === 'done' ? UI.done : UI.wip}</span>${esc(q.when)}</p>

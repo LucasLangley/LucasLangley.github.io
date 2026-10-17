@@ -31,6 +31,9 @@ export const PALETTE: Record<string, string> = {
   q: '#a3966a', // coelho da lua
   e: '#7a5530', // madeira do pilão
   o: '#fffaf0', // mochi
+  // Nia (chave do Casamy)
+  x: '#fbf1c8', // brilho
+  t: '#edbcc7', // laço e bochecha
   // Gatos
   d: '#2f2f3a', // pelo preto
   a: '#d9963f', // mel
@@ -119,27 +122,86 @@ export function breathe(sprite: Sprite): Sprite {
   return [blank, ...sprite.slice(0, 28), ...sprite.slice(29)]
 }
 
-/** Nia, a assistente do Casamy (easter egg). Mesmo tamanho do retrato do Lucas. */
+/** Nia, a mascote do Casamy: a chave dourada da casa nova, com laço rosa (cores da arte oficial). */
 export const NIA: Sprite = [
-  '..........KKKK..........',
-  '.........KVVVVK.........',
-  '.........KVVVvK.........',
-  '......KKKKVVVVKKKK......',
-  '.....KVVVVVVVVVVVVK.....',
-  '....KVVVVVVVVVVVVVVK....',
-  '...KVVVVVVVVVVVVVVVVK...',
-  '...KVVVVVVVVVVVVVVYVK...',
-  '..KVVVVVVVVVVVVVVYYYVK..',
-  '..KVVVSVVVVVVVVSVVYVVK..',
-  '..KVVSSSVVSSVVSSSVVVVK..',
-  '..KVSSSSSSSSSSSSSSSSVK..',
-  '..KVSKKKKSSSSSSKKKKSVK..',
-  '..KVSSggwSSSSSSggwSSVK..',
-  '..KVSSGGGSSSSSSGGGSSVK..',
-  '..KVSBBSSSSSSSSSSBBSVK..',
-  '..KvKSSSSSSMMSSSSSSKvK..',
-  '..KvvKKSSSSSSSSSSKKvvK..',
-  '..KKKK.KKKssssKKK.KKKK..',
+  '......kkk......kkk......',
+  '.....ktttk.kk.ktttk.....',
+  '.....kttttkttkttttk.....',
+  '.....ktttk.kk.ktttk.....',
+  '......kkk.kkkk.kkk......',
+  '........kkkkkkkk........',
+  '......kkUUUUUUUUkk......',
+  '.....kUxxUUUUUUUUUk.....',
+  '....kUxUUUUUUUUUUUUk....',
+  '...kUUUUUUUUUUUUUUUUk...',
+  '...kUUUUUUUUUUUUUUUUk...',
+  '...kUUUkwkUUUUwkkUUUk...',
+  '...kUUUUkkUUUUkkUUUUk...',
+  '...kUUttUUUUUUUUttUUk...',
+  '...kUUUUUUkUUkUUUUUUk...',
+  '....kUUUUUUkkUUUUUUk....',
+  '.....kUUUUUUUUUUUUk.....',
+  '......kkUUUUUUUUkk......',
+  '........kkkkkkkk........',
+]
+
+/** Nia feliz (lista pronta): olhos fechados e boca aberta. */
+export const NIA_HAPPY: Sprite = [
+  '......kkk......kkk......',
+  '.....ktttk.kk.ktttk.....',
+  '.....kttttkttkttttk.....',
+  '.....ktttk.kk.ktttk.....',
+  '......kkk.kkkk.kkk......',
+  '........kkkkkkkk........',
+  '......kkUUUUUUUUkk......',
+  '.....kUxxUUUUUUUUUk.....',
+  '....kUxUUUUUUUUUUUUk....',
+  '...kUUUUUUUUUUUUUUUUk...',
+  '...kUUUUUUUUUUUUUUUUk...',
+  '...kUUUUUkUUUUUkUUUUk...',
+  '...kUUUUkUkUUUkUkUUUk...',
+  '...kUUttUUUUUUUUttUUk...',
+  '...kUUUUUUkkkkUUUUUUk...',
+  '....kUUUUUkttkUUUUUk....',
+  '.....kUUUUUUUUUUUUk.....',
+  '......kkUUUUUUUUkk......',
+  '........kkkkkkkk........',
+]
+
+/** Nia de corpo inteiro, com a haste e os dois dentes da chave, para aparecer como NPC. */
+export const NIA_KEY: Sprite = [
+  '......kkk......kkk......',
+  '.....ktttk.kk.ktttk.....',
+  '.....kttttkttkttttk.....',
+  '.....ktttk.kk.ktttk.....',
+  '......kkk.kkkk.kkk......',
+  '........kkkkkkkk........',
+  '......kkUUUUUUUUkk......',
+  '.....kUxxUUUUUUUUUk.....',
+  '....kUxUUUUUUUUUUUUk....',
+  '...kUUUUUUUUUUUUUUUUk...',
+  '...kUUUUUUUUUUUUUUUUk...',
+  '...kUUUkwkUUUUwkkUUUk...',
+  '...kUUUUkkUUUUkkUUUUk...',
+  '...kUUttUUUUUUUUttUUk...',
+  '...kUUUUUUkUUkUUUUUUk...',
+  '....kUUUUUUkkUUUUUUk....',
+  '.....kUUUUUUUUUUUUk.....',
+  '......kkUUUUUUUUkk......',
+  '........kkkUUkkk........',
+  '..........kUUk..........',
+  '..........kUUk..........',
+  '..........kUUk..........',
+  '..........kUUk..........',
+  '..........kUUk..........',
+  '..........kUUkkkk.......',
+  '..........kUUUUUk.......',
+  '..........kUUkkkk.......',
+  '..........kUUkkkkk......',
+  '..........kUUUUUUk......',
+  '..........kUUkkkkk......',
+  '..........kUUk..........',
+  '..........kkkk..........',
 ]
 
 /** Todinho: gato frajola (preto e branco), sentado de frente. */

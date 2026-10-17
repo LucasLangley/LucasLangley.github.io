@@ -363,6 +363,7 @@ export default {
     done: 'COMPLETE',
     wip: 'IN PROGRESS',
     goal: 'GOAL',
+    niaQuest: "Hi! I'm Nia, the key to your new home. In Casamy I help you see what's still missing.",
     party: 'PARTY',
     loot: 'REWARDS',
     badgeNew: 'NEW!',

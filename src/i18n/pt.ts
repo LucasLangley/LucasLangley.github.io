@@ -370,6 +370,7 @@ export default {
     done: 'CONCLUÍDA',
     wip: 'EM ANDAMENTO',
     goal: 'OBJETIVO',
+    niaQuest: 'Oi! Eu sou a Nia, a chave da casa nova. No Casamy eu ajudo a ver o que ainda falta.',
     party: 'GRUPO',
     loot: 'RECOMPENSAS',
     badgeNew: 'NOVO!',
