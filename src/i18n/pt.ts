@@ -6,14 +6,14 @@ export default {
     className: 'DEV FUNDADOR',
     location: 'Taubaté, SP',
     level: 1,
-    levelNote: '1 app na App Store',
-    nextLevel: 'Casamy no Android e na web',
+    levelNote: 'Casamy no iOS e no Android',
+    nextLevel: 'Casamy na web',
     // Do LinkedIn (Open to work): onde topa trabalhar.
     openTo: 'Presencial, híbrido ou remoto, a partir de Taubaté (SP)',
     expPercent: 35,
     bio: [
       'Sou programador júnior na Hermanos TI, em Taubaté, desde junho de 2025.',
-      'Também sou fundador solo do Casamy: o app que monta a lista do que falta na casa nova. Ele chegou à App Store em outubro de 2026.',
+      'Também sou fundador solo do Casamy: o app que monta a lista do que falta na casa nova. Ele chegou à App Store em outubro de 2026 e ao Google Play em novembro.',
       'Uso IA no fluxo diário de desenvolvimento para iterar rápido e lançar atualizações com frequência.',
       'Comecei por redes e segurança, com a trilha da Cisco Networking Academy (CCNA e cibersegurança).',
     ],
@@ -39,7 +39,7 @@ export default {
       type: 'MOBILE',
       icon: 'phone',
       text: 'O app do Casamy é Expo + React Native: Expo Router, Reanimated, login com Apple e Google, notificações e compras dentro do app.',
-      usedIn: 'Casamy (iOS)',
+      usedIn: 'Casamy (iOS e Android)',
     },
     {
       name: 'TypeScript',
@@ -126,7 +126,7 @@ export default {
       kind: 'main',
       name: 'Casamy',
       status: 'done',
-      when: 'Lançado na App Store · out 2026',
+      when: 'App Store (out 2026) e Google Play (nov 2026)',
       icon: 'casamy',
       goal: 'Mostrar a quem vai montar a casa nova o que ainda falta, cômodo por cômodo e com preço, e deixar a família reservar presentes sem repetir.',
       party: 'Solo: produto, código, design e lançamento',
@@ -140,18 +140,19 @@ export default {
       links: [
         { label: 'SITE', href: 'https://casamy.com.br' },
         { label: 'APP STORE', href: 'https://apps.apple.com/app/id6814494833' },
+        { label: 'GOOGLE PLAY', href: 'https://play.google.com/store/apps/details?id=com.lucasboroto.casamy' },
       ],
     },
     {
       id: 'casamy-next',
       kind: 'side',
-      name: 'Casamy: Android e web',
+      name: 'Casamy na web',
       status: 'wip',
       when: 'Próxima etapa',
       icon: 'phone',
-      goal: 'Levar o Casamy para quem não usa iPhone: versão para Android e versão web.',
+      goal: 'Levar o Casamy inteiro para o navegador, para quem não quer instalar o app.',
       party: 'Solo',
-      loot: ['Mais casas montadas', 'Família inteira na mesma lista, em qualquer celular'],
+      loot: ['Mais casas montadas', 'Família inteira na mesma lista, em qualquer aparelho'],
       links: [],
     },
     {
@@ -191,7 +192,8 @@ export default {
   ],
 
   journey: [
-    { when: 'OUT 2026', title: 'Lança o Casamy na App Store', place: 'Fundador solo', icon: 'casamy', badge: 'new' },
+    { when: 'NOV 2026', title: 'Lança o Casamy no Google Play', place: 'Fundador solo', icon: 'casamy', badge: 'new' },
+    { when: 'OUT 2026', title: 'Lança o Casamy na App Store', place: 'Fundador solo', icon: 'casamy' },
     { when: 'JUN 2025', title: 'Programador Júnior', place: 'Hermanos TI · contrato · Taubaté', icon: 'phone', badge: 'now' },
     { when: 'FEV 2025', title: 'Introduction to IoT', place: 'Cisco', icon: 'shield' },
     { when: 'JUN 2024', title: 'CCNA: Introduction to Networks', place: 'Cisco · com carta de honraria', icon: 'shield' },
